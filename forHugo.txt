@@ -25,8 +25,21 @@ et pour finir tu fais un
     git pull 
 puis un 
     git push          # si tu as un     git push --set-upstream origin *leNomDeTaBranche*     lance la commande c'est qu'elle n'existe pas encore sur le dépot
-    
 
 
 
-test hugo
+
+git pull # a faire au début
+git branch # permet de crée la branche (un peu comme un dossier)
+
+git checkout nomBranche #permet d'entrer dans la branche/ le dossier
+git pull 
+
+#faire le code
+
+
+git add *leNomDuFichier1QueTuAsEdite* *fichier2* *fichierN* #permet la sauvegarde
+git status #permet de vérifier que tout c'est fait sans problème
+git commit -m "message"  #permet de faire un résumé de ce que l'on a fait
+git pull
+git push #permet de le mettre dans la version visible par tous
