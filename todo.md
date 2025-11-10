@@ -59,7 +59,7 @@ typedef struct {
 ```
 
 **Fonctions :**
-- `void init_game_state(Game *game)` - Passage par référence
+- `void init_game_state(Game *game)`
 - `void set_game_state(Game *game, GameState state)`
 - `GameState get_game_state(Game game)` - Passage par valeur pour lecture
 
@@ -131,7 +131,7 @@ typedef struct {
 ```
 
 **Fonctions :**
-- `void init_snake(Snake *snake, int start_x, int start_y, int initial_length)`
+- `void init_snake(Snake *snake, Position p, int initial_length)`
 - `void move_snake(Snake *snake)`                                    - Déplace la tête, avance la queue
 - `void grow_snake(Snake *snake)`                                    - N'avance pas la queue lors du prochain move
 - `int check_self_collision(Snake snake)`                            - Vérifie si tête touche corps
