@@ -10,6 +10,7 @@ projetSnake/
 ├── src/           (fichiers .c)
 ├── include/       (fichiers .h)
 ├── lib/           (MLV si besoin)
+├── build/         (Fichier .o)
 └── ressources/
     ├── images/
     ├── saves/
@@ -20,27 +21,21 @@ projetSnake/
 
 ## 2. Fichiers et fonctions à créer
 
-⚠️ **CONTRAINTE IMPORTANTE : PAS DE POINTEURS** (passage par référence OK)
-- Utiliser des **tableaux statiques** avec taille maximale
-- Passer les structures par **référence avec &**
-- Éviter malloc/free, new/delete
-
----
-
 ### 📁 **main.c** / **main.h**
 **Rôle :** Point d'entrée, orchestration du jeu
 
 **Fonctions :**
-- `int main(int argc, char argv[][50])` - Point d'entrée principal
-- `void init_game(Game *game)` - Initialisation par référence
-- `void cleanup_game(Game *game)` - Nettoyage par référence
-- `void game_loop(Game *game)` - Boucle principale du jeu (voir structure imposée)
+- `int main(int argc, char *argv[])` - Point d'entrée principal
+- `void init_game(Game *game)`       - Initialisation par référence
+- `void cleanup_game(Game *game)`    - Nettoyage par référence
+- `void game_loop(Game *game)`       - Boucle principale du jeu (voir structure imposée)
 
 ---
 
 ### 📁 **game_state.c** / **game_state.h**
 **Rôle :** Gestion de l'état global du jeu
 
+A check si on prend tout les types
 **Structures :**
 ```c
 typedef enum {
@@ -69,50 +64,6 @@ typedef struct {
 - `GameState get_game_state(Game game)` - Passage par valeur pour lecture
 
 ---
-
-### 📁 **snake.c** / **snake.h**
-**Rôle :** Gestion du serpent (SANS liste chaînée)
-
-**Structures :**
-```c
-#define MAX_SNAKE_LENGTH 500  /* Taille max du serpent */
-
-typedef enum {
-    DIR_UP,
-    DIR_DOWN,
-    DIR_LEFT,
-    DIR_RIGHT
-} Direction;
-
-typedef struct {
-    int x;
-    int y;
-} Position;
-
-/* Serpent = tableau de positions (comme une file circulaire) */
-typedef struct {
-    Position segments[MAX_SNAKE_LENGTH];  /* Tableau statique */
-    int head_index;                       /* Index de la tête */
-    int tail_index;                       /* Index de la queue */
-    int length;                           /* Longueur actuelle */
-    Direction current_direction;
-    Direction next_direction;
-    int is_alive;
-} Snake;
-```
-
-**Fonctions :**
-- `void init_snake(Snake *snake, int start_x, int start_y, int initial_length)`
-- `void move_snake(Snake *snake)` - Déplace la tête, avance la queue
-- `void grow_snake(Snake *snake)` - N'avance pas la queue lors du prochain move
-- `int check_self_collision(Snake snake)` - Vérifie si tête touche corps
-- `void set_snake_direction(Snake *snake, Direction dir)`
-- `int is_valid_direction_change(Direction current, Direction new)`
-- `Position get_head_position(Snake snake)` - Retourne position tête
-- `Position get_segment_position(Snake snake, int index)` - Position segment i
-
----
-
 ### 📁 **grid.c** / **grid.h**
 **Rôle :** Gestion de la grille de jeu
 
@@ -136,19 +87,61 @@ typedef struct {
     int height;                                 /* = GRID_HEIGHT */
     int has_borders;                            /* 0 ou 1 */
 } Grid;
+
+
+typedef struct {
+    int x;
+    int y;
+} Position;
 ```
 
 **Fonctions :**
-- `void init_grid(Grid *grid, int has_borders)` - Initialise tableau
-- `void clear_grid(Grid *grid)` - Remplit de CELL_EMPTY
-- `void update_grid_with_snake(Grid *grid, Snake snake)` - Marque cellules serpent
-- `void update_grid_with_food(Grid *grid, Position food)` - Marque cellule nourriture
-- `CellType get_cell(Grid grid, int x, int y)` - Lecture cellule
-- `void set_cell(Grid *grid, int x, int y, CellType type)` - Écriture cellule
-- `Position wrap_position(Grid grid, Position pos)` - Téléportation bords
-- `int is_position_in_bounds(Grid grid, int x, int y)` - Vérifie limites
+- `void init_grid(Grid *grid, int has_borders)`            - Initialise tableau
+- `void clear_grid(Grid *grid)`                            - Remplit de CELL_EMPTY
+- `void update_grid_with_snake(Grid *grid, Snake snake)`   - Marque cellules serpent
+- `void update_grid_with_food(Grid *grid, Position food)`  - Marque cellule nourriture
+- `CellType get_cell(Grid grid, Position p)`               - Lecture cellule
+- `void set_cell(Grid *grid, Position p, CellType type)`   - Écriture cellule
 
 ---
+
+### 📁 **snake.c** / **snake.h**
+**Rôle :** Gestion du serpent
+
+**Structures :**
+```c
+#define MAX_SNAKE_LENGTH 500  /* Taille max du serpent */
+
+typedef enum {
+    DIR_UP,
+    DIR_DOWN,
+    DIR_LEFT,
+    DIR_RIGHT
+} Direction;
+
+/* Serpent = tableau de positions (comme une file circulaire) */
+typedef struct {
+    Position segments[MAX_SNAKE_LENGTH];  /* Tableau statique contenant toutes les positions du serpant */
+    int head_index;                       /* Index de la tête */
+    int tail_index;                       /* Index de la queue */
+    int length;                           /* Longueur actuelle */
+    Direction direction;          /* Direction du déplacement en cours */
+    int is_alive;
+} Snake;
+```
+
+**Fonctions :**
+- `void init_snake(Snake *snake, int start_x, int start_y, int initial_length)`
+- `void move_snake(Snake *snake)`                                    - Déplace la tête, avance la queue
+- `void grow_snake(Snake *snake)`                                    - N'avance pas la queue lors du prochain move
+- `int check_self_collision(Snake snake)`                            - Vérifie si tête touche corps
+- `void set_snake_direction(Snake *snake, Direction dir)`            - change la valeur de direction
+- `int is_valid_direction_change(Direction current, Direction new)`  - check si la valeur de la prochaine direction est valide
+- `Position get_head_position(Snake snake)`                          - Retourne position tête
+- `Position get_segment_position(Snake snake, int index)`            - Position segment i
+
+---
+
 
 ### 📁 **food.c** / **food.h**
 **Rôle :** Gestion de la nourriture
@@ -164,26 +157,28 @@ typedef struct {
 
 **Fonctions :**
 - `void spawn_food(Grid *grid, Snake snake, Food *food)` - Génère position aléatoire
-- `int check_food_collision(Snake snake, Food food)` - Retourne 1 si collision
-- `void reset_food(Food *food)` - Désactive la nourriture
+- `int check_food_collision(Snake snake, Food food)`     - Retourne 1 si collision 0 sinon
+- `void disable_food(Food *food)`                        - Désactive la nourriture
 
 ---
 
 ### 📁 **controls.c** / **controls.h**
 **Rôle :** Gestion des entrées clavier
 
+Pas check si les fonctions sont cohérante
 **Fonctions :**
-- `void handle_input(Game *game, Snake *snake, MLV_Keyboard_button key)` - Traite input jeu
-- `void handle_menu_input(Game *game, MLV_Keyboard_button key, int *menu_selection)` - Navigation menu
+- `void handle_input(Game *game, Snake *snake, MLV_Keyboard_button key)`               - Traite input jeu
+- `void handle_menu_input(Game *game, MLV_Keyboard_button key, int *menu_selection)`   - Navigation menu
 - `void handle_pause_input(Game *game, MLV_Keyboard_button key, int *pause_selection)` - Menu pause
-- `Direction key_to_direction(MLV_Keyboard_button key)` - Convertit touche en direction
-- `int is_direction_key(MLV_Keyboard_button key)` - Vérifie si touche directionnelle
+- `Direction key_to_direction(MLV_Keyboard_button key)`                                - Convertit touche en direction
+- `int is_direction_key(MLV_Keyboard_button key)`                                      - Vérifie si touche directionnelle
 
 ---
 
 ### 📁 **collision.c** / **collision.h**
 **Rôle :** Détection des collisions
 
+Probablement inutile
 **Fonctions :**
 - `int check_wall_collision(Grid grid, Position pos)` - Retourne 1 si collision mur
 - `int check_snake_collision(Snake snake, Position pos)` - Retourne 1 si collision serpent
@@ -201,16 +196,14 @@ typedef enum {
     MENU_NEW_GAME,
     MENU_LOAD_GAME,
     MENU_SCORES,
-    MENU_QUIT,
-    MENU_ITEM_COUNT
+    MENU_QUIT
 } MenuOption;
 
 typedef enum {
     PAUSE_RESUME,
     PAUSE_SAVE,
     PAUSE_MAIN_MENU,
-    PAUSE_QUIT,
-    PAUSE_ITEM_COUNT
+    PAUSE_QUIT
 } PauseOption;
 ```
 
@@ -242,7 +235,6 @@ typedef enum {
 - `void render_grid(Grid grid)` - Dessine grille
 - `void render_snake(Snake snake)` - Dessine serpent
 - `void render_food(Food food)` - Dessine nourriture
-- `void render_ui(int score, int level, time_t elapsed_time)` - Affiche HUD
 - `void clear_screen()` - Efface écran
 - `void update_display()` - Wrapper pour MLV_actualize_window()
 
@@ -339,6 +331,7 @@ typedef struct {
 
 ---
 
+Je ne check pas cette parti
 ### 📁 **bonus.c** / **bonus.h** (FONCTIONNALITÉS BONUS)
 **Rôle :** Objets spéciaux et bonus
 
