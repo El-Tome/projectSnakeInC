@@ -8,43 +8,53 @@ void update_grid_with_food(Grid *grid, Position food)  - Marque cellule nourritu
 CellType get_cell(Grid grid, Position p)               - Lecture cellule
 void set_cell(Grid *grid, Position p, CellType type)   - Écriture cellule
 */
-int test(Grid *grid){ /*Si la hauteur/longueur sont impossible*/
-    if (width<0 || height<0)
-    {
+int checkGridWidthHeigh(int width, int height){ /*Si la hauteur/longueur sont impossible*/
+    if (width<0 || height<0) {
         printf("Le nombre de case est trop petit ! Erreur dans grille.c");
         return 0;
-    }
-    else if (width>GRID_WIDTH || height>GRID_HEIGHT){
+    } else if (width>GRID_WIDTH || height>GRID_HEIGHT) {
         printf("Le nombre de case est trop grand ! Erreur dans grille.c");
-        return 0
-            }
-    return 1
-        }
-
-
-    
-    void clear_grid(Grid *grid){
-        int i, j;
-        for (i=0; i<width; i++)
-        {
-            for (j=0; j<height; j++)
-            {
-                grid.cells[i][j]=CELL_EMPTY;
-            }
-        }
+        return 0;
     }
-
-void init_grid(Grid *grid) {
-    clear_grid(Grid *grid);
-    grid->has_borders = has_borders ;
-    
+    return 1;
 }
 
-CellType get_cell(Grid grid, Position p){
-    return grid.cells[p.x][p.y];
+void clear_grid(Grid *grid) {
+    int i, j;
+    for (i=0; i<width; i++) {
+        for (j=0; j<height; j++) {
+            grid.cells[i][j] = CELL_EMPTY;
+        }
+    }
+}
+
+Grid init_grid(int width, int height, int has_borders) {
+    /* initialisation de la grille */
+    Grid grid;
+
+    /* check si la largeur et longueur sont valide et les assignes */
+    if (!checkGridWidthHeigh(width, height)) {
+        grid.witdth = 10;
+        grid.height = 10;
+    } else {
+        grid.witdth = width;
+        grid.height = height;
+    }
+
+    /* remplie la grille de cellule vide */ 
+    clear_grid(&grid);
+
+    /* défini si la grille à des murs */
+    grid.has_borders = has_borders;
+
+    return grid;
+}
+
+CellType get_cell(Grid *grid, Position *p) {
+    return grid->cells[p->x][p->y];
             
 }
 
-void set_cell(Grid *grid, Position p, CellType type){
-    grid.cells[p.x][p.y] = type;
+void set_cell(Grid *grid, Position *p, CellType type){
+    grid->cells[p->x][p->y] = type;
 }
