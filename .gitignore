@@ -1,2 +1,4 @@
 .history/
 snake
+.vscode/
+.DS_Store
