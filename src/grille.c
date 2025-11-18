@@ -1,3 +1,4 @@
+#include "grille.h"
 
 /*Fonctions :*/
 /*
@@ -21,9 +22,9 @@ int checkGridWidthHeigh(int width, int height){ /*Si la hauteur/longueur sont im
 
 void clear_grid(Grid *grid) {
     int i, j;
-    for (i=0; i<width; i++) {
-        for (j=0; j<height; j++) {
-            grid.cells[i][j] = CELL_EMPTY;
+    for (i=0; i<grid->width; i++) {
+        for (j=0; j<grid->height; j++) {
+            grid->cells[i][j] = CELL_EMPTY;
         }
     }
 }
@@ -34,10 +35,10 @@ Grid init_grid(int width, int height, int has_borders) {
 
     /* check si la largeur et longueur sont valide et les assignes */
     if (!checkGridWidthHeigh(width, height)) {
-        grid.witdth = 10;
+        grid.width = 10;
         grid.height = 10;
     } else {
-        grid.witdth = width;
+        grid.width = width;
         grid.height = height;
     }
 
