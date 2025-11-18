@@ -1,4 +1,4 @@
-
+#include "food.h"
 
 /*Fonctions :*/
 void spawn_food(Grid *grid, Snake snake, Food *food){
