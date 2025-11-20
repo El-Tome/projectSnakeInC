@@ -1,23 +1,27 @@
 #include "main.h"
+#include "menu.h"
 
 int main() {
-    unsigned int height = 600;
-    unsigned int width = 800;
-    int quitter = 0;
+    WindowSize window_size;
     MenuState menu_state = MAIN_MENU;
+    int quitter          = 0;
 
 
-    /* Créaation de la fenetre MLV */
-    MLV_get_desktop_size(&width, &height);
-    MLV_create_full_screen_window("Snake", "Snake", width, height);    
+
+    /* Création de la fenetre MLV */
+    MLV_get_desktop_size(&window_size.width, &window_size.height);
+    MLV_create_full_screen_window("Snake", "Snake", window_size.width, window_size.height);    
 
     while (!quitter) {
-        // mis à jour de l'image
+        /* 1. Mis à jour de l'image */
+        MLV_update_window();
+        /* 2. Effacement de l'écran */
+        MLV_clear_window(MLV_COLOR_BLACK);
 
-        // défini dans quel endroit on est dans le jeu
+        /* 3. Défini dans quel endroit on est dans le jeu et affiche le menu correspondant */
         switch (menu_state) {
             case MAIN_MENU:
-                display_menu();
+                display_menu(window_size);
                 break;
             case NEW_GAME_MENU:
                 create_new_game();
@@ -29,6 +33,8 @@ int main() {
                 display_scores_menu();
                 break;
             case IN_GAME:
+
+
                 break;
             default:
                 quitter = 1;
@@ -46,6 +52,9 @@ int main() {
     //     // Calcul temps écoulé
     //     // Attente si nécessaire
     }
+
+    MLV_free_window ();
+
 
 
     // detecte les evenements clavier / souris pour savoir sur quelle bouton on a cliqué

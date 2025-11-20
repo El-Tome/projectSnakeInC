@@ -1,17 +1,11 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef SNAKE_MENU_H
+#define SNAKE_MENU_H
 
 #include "main.h"
-typedef enum {
-    FREEZE_GAME_MENU = 0,
-    PLAYING          = 1,
-    GAME_OVER_MENU   = 2,
-    PAUSE_MENU       = 3,
-    SAVE_MENU        = 4
-} GameState;
 
-
-void display_menu(); // menu principal avec les options : nouveau jeu, charger une partie, scores, quitter
+void display_menu(
+    WindowSize window_size
+);
 
 void create_new_game();       // lance la suite d'éxecution pour générer une nouvelle partie
 void display_new_game_menu(); // affiche les options de jeu pour la nouvelle partie

@@ -2,7 +2,6 @@
 #define SNAKE_MAIN_H
 
 #include <MLV/MLV_all.h>
-#include "game.h"
 
 typedef enum {
     MAIN_MENU      = 0,
@@ -11,6 +10,19 @@ typedef enum {
     SCORES_MENU    = 3,
     IN_GAME        = 4
 } MenuState;
+
+typedef enum {
+    FREEZE_GAME_MENU = 0,
+    PLAYING          = 1,
+    GAME_OVER_MENU   = 2,
+    PAUSE_MENU       = 3,
+    SAVE_MENU        = 4
+} GameState;
+
+typedef struct {
+    unsigned int height;
+    unsigned int width;
+} WindowSize;
 
 
 #endif
