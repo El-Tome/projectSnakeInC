@@ -2,9 +2,19 @@
 #include "menu.h"
 
 int main() {
+    /* Déclaration des variables */
     WindowSize window_size;
-    MenuState menu_state = MAIN_MENU;
-    int quitter          = 0;
+    ButtonsList buttons_list;
+    MenuState menu_state;
+    int quitter;
+    struct timespec debut, fin, sleep_time;
+    long elapsed_ns;
+
+    /* Initialisation des variables */
+    menu_state = MAIN_MENU;
+    quitter    = 0;
+    buttons_list.nb_buttons = 0;
+    buttons_list.selected_button = 0;
 
 
 
@@ -13,6 +23,7 @@ int main() {
     MLV_create_full_screen_window("Snake", "Snake", window_size.width, window_size.height);    
 
     while (!quitter) {
+        clock_gettime(CLOCK_REALTIME, &debut );
         /* 1. Mis à jour de l'image */
         MLV_update_window();
         /* 2. Effacement de l'écran */
@@ -21,7 +32,7 @@ int main() {
         /* 3. Défini dans quel endroit on est dans le jeu et affiche le menu correspondant */
         switch (menu_state) {
             case MAIN_MENU:
-                display_menu(window_size);
+                display_menu(window_size, &buttons_list);
                 break;
             case NEW_GAME_MENU:
                 create_new_game();
@@ -40,23 +51,29 @@ int main() {
                 quitter = 1;
                 break;
         }
-    //     clock_gettime(CLOCK_REALTIME, &debut);
-        
-    //     // Affichage
-    //     // Récupération événement clavier (1 seul par image)
-    //     // Résolution événements
-    //     // Déplacement objets
-    //     // Résolution collisions
-        
-    //     clock_gettime(CLOCK_REALTIME, &fin);
-    //     // Calcul temps écoulé
-    //     // Attente si nécessaire
+
+        clock_gettime(CLOCK_REALTIME, &fin);
+
+        elapsed_ns = (fin.tv_nsec - debut.tv_nsec);
+        if (elapsed_ns < FRAME_TIME_NS) {
+            MLV_wait_milliseconds((FRAME_TIME_NS - elapsed_ns) / NANOS_TO_MILLIS);
+        }
+        /*
+            
+        //     // Affichage
+        //     // Récupération événement clavier (1 seul par image)
+        //     // Résolution événements
+        //     // Déplacement objets
+        //     // Résolution collisions
+            
+
+        */
     }
 
     MLV_free_window ();
 
 
-
+/*
     // detecte les evenements clavier / souris pour savoir sur quelle bouton on a cliqué
 
     // si on a cliqué sur le bouton "nouveau jeu", on crée une nouvelle partie
@@ -66,6 +83,6 @@ int main() {
     // si on a cliqué sur le bouton "quitter", on quitte le jeu
 
     // si on a cliqué sur le bouton "scores", on affiche les scores
-
+*/
     exit(EXIT_SUCCESS);
 }
