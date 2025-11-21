@@ -7,7 +7,7 @@ int main() {
     ButtonsList buttons_list;
     MenuState menu_state;
     int quitter;
-    struct timespec debut, fin, sleep_time;
+    struct timespec debut, fin;
     long elapsed_ns;
 
     /* Initialisation des variables */
@@ -16,7 +16,7 @@ int main() {
     buttons_list.nb_buttons = 0;
     buttons_list.selected_button = 0;
 
-
+    srand(time(NULL));
 
     /* Création de la fenetre MLV */
     MLV_get_desktop_size(&window_size.width, &window_size.height);
