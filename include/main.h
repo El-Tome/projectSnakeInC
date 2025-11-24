@@ -8,6 +8,7 @@
 
 #include <MLV/MLV_all.h>
 #include <time.h>
+#include "controls.h"
 
 typedef enum {
     MAIN_MENU      = 0,

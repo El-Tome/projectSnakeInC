@@ -37,6 +37,9 @@ ToucheClavier convert_key_to_enum(MLV_Keyboard_button key) {
         case MLV_KEYBOARD_ESCAPE:
             touche = ESCAPE;
             break;
+        case MLV_KEYBOARD_KP_ENTER:
+            touche = ENTER;
+            break;
         default:
             break;
     }
@@ -63,5 +66,11 @@ void clear_event() {
     }
 }
 
-
+ToucheClavier getASingleKey() {
+    ToucheClavier touche = NONE;
+    
+    touche = convert_key_to_enum(get_key_pressed());
+    clear_event();
+    return touche;
+}
 

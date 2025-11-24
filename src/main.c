@@ -9,6 +9,7 @@ int main() {
     int quitter;
     struct timespec debut, fin;
     long elapsed_ns;
+    ToucheClavier touche;
 
     /* Initialisation des variables */
     menu_state = MAIN_MENU;
@@ -33,15 +34,47 @@ int main() {
         switch (menu_state) {
             case MAIN_MENU:
                 display_menu(window_size, &buttons_list);
+                
+                touche = getASingleKey();
+                switch (touche) {
+                    case UP:
+                        buttons_list.selected_button = (buttons_list.selected_button - 1 + buttons_list.nb_buttons) % buttons_list.nb_buttons;
+                        change_selected_button(&buttons_list, buttons_list.selected_button);
+                        break;
+                    case DOWN:
+                        buttons_list.selected_button = (buttons_list.selected_button + 1) % buttons_list.nb_buttons;
+                        change_selected_button(&buttons_list, buttons_list.selected_button);
+                        break;
+                    case ENTER:
+                        switch (buttons_list.selected_button) {
+                            case 0:
+                                menu_state = NEW_GAME_MENU;
+                                break;
+                            case 1:
+                                menu_state = LOAD_GAME_MENU;
+                                break;
+                            case 2:
+                                menu_state = SCORES_MENU;
+                                break;
+                            case 3:
+                                quitter = 1;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case NEW_GAME_MENU:
-                create_new_game();
+                /*create_new_game();*/
                 break;
             case LOAD_GAME_MENU:
-                load_game();
+                /*load_game();*/
                 break;
             case SCORES_MENU:
-                display_scores_menu();
+                /*display_scores_menu();*/
                 break;
             case IN_GAME:
 
