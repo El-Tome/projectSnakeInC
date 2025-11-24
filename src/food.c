@@ -1,7 +1,7 @@
 #include "food.h"
 
 /*Fonctions :*/
-int compte_vide(Grid *grid, Position tab[]){
+int compte_vide(Grid *grid, Position tab[]){ /* Permet de retourner le nb de case vide*/
     int x, y, compteur=0;
     Position posi;
     for (x = 0; (grid->width) > x; x++) {
@@ -18,7 +18,7 @@ int compte_vide(Grid *grid, Position tab[]){
     return compteur;
 }
 
-void generateFood(Grid *grid) {
+void generateFood(Grid *grid) { /* permet de générer de la nourriture a un endroit aléatoire*/
     int nbCaseLibre, numCaseNextFood;
     Position caseLibre[MAX_CASE];
     
