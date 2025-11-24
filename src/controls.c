@@ -2,6 +2,7 @@
 
 MLV_Keyboard_button get_key_pressed() {
     MLV_Keyboard_button touche;
+    MLV_Button_state state;
 
     MLV_get_event (
         &touche, 
@@ -12,10 +13,14 @@ MLV_Keyboard_button get_key_pressed() {
         NULL,
         NULL,
         NULL,
-        NULL
+        &state
     ); 
     
-    return touche;
+    if (state == MLV_PRESSED) {
+        return touche;
+    } else {
+        return MLV_KEYBOARD_NONE;
+    }
 }
 
 ToucheClavier convert_key_to_enum(MLV_Keyboard_button key) {
@@ -37,7 +42,7 @@ ToucheClavier convert_key_to_enum(MLV_Keyboard_button key) {
         case MLV_KEYBOARD_ESCAPE:
             touche = ESCAPE;
             break;
-        case MLV_KEYBOARD_KP_ENTER:
+        case MLV_KEYBOARD_RETURN:
             touche = ENTER;
             break;
         default:
@@ -66,11 +71,4 @@ void clear_event() {
     }
 }
 
-ToucheClavier getASingleKey() {
-    ToucheClavier touche = NONE;
-    
-    touche = convert_key_to_enum(get_key_pressed());
-    clear_event();
-    return touche;
-}
 

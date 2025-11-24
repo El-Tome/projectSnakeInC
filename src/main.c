@@ -9,7 +9,6 @@ int main() {
     int quitter;
     struct timespec debut, fin;
     long elapsed_ns;
-    ToucheClavier touche;
 
     /* Initialisation des variables */
     menu_state = MAIN_MENU;
@@ -34,38 +33,25 @@ int main() {
         switch (menu_state) {
             case MAIN_MENU:
                 display_menu(window_size, &buttons_list);
-                
-                touche = getASingleKey();
-                switch (touche) {
-                    case UP:
-                        buttons_list.selected_button = (buttons_list.selected_button - 1 + buttons_list.nb_buttons) % buttons_list.nb_buttons;
-                        change_selected_button(&buttons_list, buttons_list.selected_button);
+
+                switch (handle_main_menu_navigation(&buttons_list)) {
+                    case 0:
+                        menu_state = NEW_GAME_MENU;
                         break;
-                    case DOWN:
-                        buttons_list.selected_button = (buttons_list.selected_button + 1) % buttons_list.nb_buttons;
-                        change_selected_button(&buttons_list, buttons_list.selected_button);
+                    case 1:
+                        menu_state = LOAD_GAME_MENU;
                         break;
-                    case ENTER:
-                        switch (buttons_list.selected_button) {
-                            case 0:
-                                menu_state = NEW_GAME_MENU;
-                                break;
-                            case 1:
-                                menu_state = LOAD_GAME_MENU;
-                                break;
-                            case 2:
-                                menu_state = SCORES_MENU;
-                                break;
-                            case 3:
-                                quitter = 1;
-                                break;
-                            default:
-                                break;
-                        }
+                    case 2:
+                        menu_state = SCORES_MENU;
+                        break;
+                    case 3:
+                        quitter = 1;
                         break;
                     default:
                         break;
                 }
+
+               
                 break;
             case NEW_GAME_MENU:
                 /*create_new_game();*/

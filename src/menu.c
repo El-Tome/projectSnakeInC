@@ -84,6 +84,36 @@ void change_selected_button(ButtonsList *buttons_list, int selected_button) {
     buttons_list->selected_button = selected_button;
 }
 
+int handle_main_menu_navigation(ButtonsList *buttons_list) {
+    ToucheClavier touche;
+    int selected_button;
+
+    touche = convert_key_to_enum(get_key_pressed());
+    switch (touche) {
+        case UP:
+            buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+            change_selected_button(buttons_list, buttons_list->selected_button);
+            selected_button = -1;
+            break;
+
+        case DOWN:
+            buttons_list->selected_button = (buttons_list->selected_button + 1) % buttons_list->nb_buttons;
+            change_selected_button(buttons_list, buttons_list->selected_button);
+            selected_button = -1;
+            break;
+
+        case ENTER:
+            selected_button = buttons_list->selected_button;
+            break;
+        default:
+            selected_button = -1;
+            break;
+    }
+
+    return selected_button;
+    
+}
+
 void create_new_game();       /* lance la suite d'éxecution pour générer une nouvelle partie */
 void display_new_game_menu(); /* affiche les options de jeu pour la nouvelle partie */
 void init_new_game();         /* initialise partie */

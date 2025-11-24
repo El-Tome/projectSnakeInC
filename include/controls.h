@@ -18,8 +18,6 @@ MLV_Keyboard_button get_key_pressed();
 
 ToucheClavier convert_key_to_enum(MLV_Keyboard_button key);
 
-ToucheClavier getASingleKey();
-
 void clear_event();
 
 
