@@ -121,12 +121,18 @@ int handle_main_menu_navigation(ButtonsList *buttons_list) {
 
 void display_new_game_menu(
     WindowSize window_size,
-    ButtonsList *buttons_list
+    ButtonsList *buttons_list,
+    GameSettings *settings
 ) {
     Button btn;
     int total_menu_h;
     int total_menu_w;
     int start_x, start_y;
+
+    char size_text[100];
+    char speed_text[100];
+    int text_width, text_height;
+    int text_x, text_y;
 
     /* Dimensions et positions relatives (en pourcentage) */
     btn.width      = window_size.width  / 6;   /* Largeur : 16% de l'écran */
@@ -147,18 +153,28 @@ void display_new_game_menu(
     /* LIGNE 1 : Mode 2 joueurs et Murs */
     btn.top_left_x = start_x;
     btn.top_left_y = start_y;
-    strcpy(btn.text, "2 Joueurs: Non");
+    strcpy(btn.text, settings->is_two_players ? "2 Joueurs: Oui" : "2 Joueurs: Non");
     draw_button(btn, buttons_list->selected_button == 0);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     btn.top_left_x += btn.width + btn.gap_width * 2;
-    strcpy(btn.text, "Murs: Non");
+    strcpy(btn.text, settings->has_walls ? "Murs: Oui" : "Murs: Non");
     draw_button(btn, buttons_list->selected_button == 1);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     /* LIGNE 2 : Taille X de la grille */
+    /* Affichage de la taille actuelle de la grille */
+    
+    sprintf(size_text, "Taille: %d x %d", settings->width, settings->height);
+    MLV_get_size_of_text(size_text, &text_width, &text_height);
+    
+    text_x = start_x + total_menu_w / 2 - text_width / 2;
+    text_y = start_y + btn.height + btn.gap_height / 2 - text_height / 2;
+    
+    MLV_draw_text(text_x, text_y, size_text, MLV_COLOR_WHITE);
+
     btn.top_left_x = start_x;
     btn.top_left_y += btn.height + btn.gap_height;
     strcpy(btn.text, "Largeur -");
@@ -187,6 +203,14 @@ void display_new_game_menu(
     buttons_list->nb_buttons++;
 
     /* LIGNE 4 : Vitesse (centrée) */
+    sprintf(speed_text, "Vitesse: %d", settings->speed);
+    MLV_get_size_of_text(speed_text, &text_width, &text_height);
+    
+    text_x = start_x + total_menu_w / 2 - text_width / 2;
+    text_y = start_y + btn.height * 3 + btn.gap_height * 2 + btn.gap_height / 2 - text_height / 2;
+    
+    MLV_draw_text(text_x, text_y, speed_text, MLV_COLOR_WHITE);
+    
     btn.top_left_x = start_x;
     btn.top_left_y += btn.height + btn.gap_height;
     strcpy(btn.text, "Vitesse -");

@@ -1,20 +1,30 @@
 #include "main.h"
 #include "menu.h"
+#include <time.h>
+#include "game.h"
 
 int main() {
     /* Déclaration des variables */
-    WindowSize window_size;
+    WindowSize  window_size;
     ButtonsList buttons_list;
-    MenuState menu_state;
-    int quitter;
-    struct timespec debut, fin;
+    MenuState   menu_state;
+    Game        game;
+    int         quitter;
     long elapsed_ns;
+
+    struct timespec debut, fin;
 
     /* Initialisation des variables */
     menu_state = MAIN_MENU;
     quitter    = 0;
     buttons_list.nb_buttons = 0;
     buttons_list.selected_button = 0;
+
+    game.settings.width  = 20;
+    game.settings.height = 15;
+    game.settings.speed  = 10; 
+    game.settings.is_two_players = 0;
+    game.settings.has_walls      = 0;
 
     srand(time(NULL));
 
@@ -56,36 +66,47 @@ int main() {
 
 
             case NEW_GAME_MENU:
-                display_new_game_menu(window_size, &buttons_list);
+                display_new_game_menu(window_size, &buttons_list, &game.settings);
 
                 /* Gestion des actions des boutons */
                 switch(handle_new_game_menu_navigation(&buttons_list)) {
                     case 0:
-                        /* TODO: Basculer mode 2 joueurs */
+                        game.settings.is_two_players = !game.settings.is_two_players;
                         break;
                     case 1:
-                        /* TODO: Basculer Murs */
+                        game.settings.has_walls = !game.settings.has_walls;
                         break;
                     case 2:
-                        /* TODO: Diminuer Largeur */
+                        if (game.settings.width > MIN_GRID_WIDTH) {
+                            game.settings.width--;
+                        }
                         break;
                     case 3:
-                        /* TODO: Augmenter Largeur */
+                        if (game.settings.width < MAX_GRID_WIDTH) {
+                            game.settings.width++;
+                        }
                         break;
                     case 4:
-                        /* TODO: Diminuer Hauteur */
+                        if (game.settings.height > MIN_GRID_HEIGHT) {
+                            game.settings.height--;
+                        }
                         break;
                     case 5:
-                        /* TODO: Augmenter Hauteur */
+                        if (game.settings.height < MAX_GRID_HEIGHT) {
+                            game.settings.height++;
+                        }
                         break;
                     case 6:
-                        /* TODO: Diminuer Vitesse */
+                        if (game.settings.speed > MIN_SPEED) {
+                            game.settings.speed--;
+                        }
                         break;
                     case 7:
-                        /* TODO: Augmenter Vitesse */
+                        if (game.settings.speed < MAX_SPEED) {
+                            game.settings.speed++;
+                        }
                         break;
                     case 8:
-                        /* Retour */
                         menu_state = MAIN_MENU;
                         break;
                     case 9:
@@ -93,8 +114,9 @@ int main() {
                         ; /* Code pour dire "Lancer la partie" */
                         break;
                 }
-                /*create_new_game(); */
                 break;
+
+                
             case LOAD_GAME_MENU:
                 /*load_game();*/
                 break;

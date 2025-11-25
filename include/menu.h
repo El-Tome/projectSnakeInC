@@ -7,6 +7,8 @@
 #include "main.h"
 #include <string.h>
 #include <MLV/MLV_all.h>
+#include "controls.h"
+#include "game.h"
 
 typedef struct {
     int top_left_x;
@@ -37,7 +39,8 @@ int handle_main_menu_navigation(ButtonsList *buttons_list);
 
 void display_new_game_menu(
     WindowSize window_size,
-    ButtonsList *buttons_list
+    ButtonsList *buttons_list,
+    GameSettings *settings
 );
 
 int handle_new_game_menu_navigation(ButtonsList *buttons_list);

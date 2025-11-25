@@ -9,16 +9,7 @@ void update_grid_with_food(Grid *grid, Position food)  - Marque cellule nourritu
 CellType get_cell(Grid grid, Position p)               - Lecture cellule
 void set_cell(Grid *grid, Position p, CellType type)   - Écriture cellule
 */
-int checkGridWidthHeigh(int width, int height){ /*Si la hauteur/longueur sont impossible*/
-    if (width<0 || height<0) {
-        printf("Le nombre de case est trop petit ! Erreur dans grille.c");
-        return 0;
-    } else if (width>GRID_WIDTH || height>GRID_HEIGHT) {
-        printf("Le nombre de case est trop grand ! Erreur dans grille.c");
-        return 0;
-    }
-    return 1;
-}
+
 
 void clear_grid(Grid *grid) {
     int i, j;
@@ -33,14 +24,8 @@ Grid init_grid(int width, int height, int has_borders) {
     /* initialisation de la grille */
     Grid grid;
 
-    /* check si la largeur et longueur sont valide et les assignes */
-    if (!checkGridWidthHeigh(width, height)) {
-        grid.width = 10;
-        grid.height = 10;
-    } else {
-        grid.width = width;
-        grid.height = height;
-    }
+    grid.width = width;
+    grid.height = height;
 
     /* remplie la grille de cellule vide */ 
     clear_grid(&grid);
