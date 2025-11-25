@@ -37,6 +37,7 @@ int main() {
                 switch (handle_main_menu_navigation(&buttons_list)) {
                     case 0:
                         menu_state = NEW_GAME_MENU;
+                        buttons_list.selected_button = 1;
                         break;
                     case 1:
                         menu_state = LOAD_GAME_MENU;
@@ -51,10 +52,48 @@ int main() {
                         break;
                 }
 
-               
                 break;
+
+
             case NEW_GAME_MENU:
-                /*create_new_game();*/
+                display_new_game_menu(window_size, &buttons_list);
+
+                /* Gestion des actions des boutons */
+                switch(handle_new_game_menu_navigation(&buttons_list)) {
+                    case 0:
+                        /* TODO: Basculer mode 2 joueurs */
+                        break;
+                    case 1:
+                        /* TODO: Basculer Murs */
+                        break;
+                    case 2:
+                        /* TODO: Diminuer Largeur */
+                        break;
+                    case 3:
+                        /* TODO: Augmenter Largeur */
+                        break;
+                    case 4:
+                        /* TODO: Diminuer Hauteur */
+                        break;
+                    case 5:
+                        /* TODO: Augmenter Hauteur */
+                        break;
+                    case 6:
+                        /* TODO: Diminuer Vitesse */
+                        break;
+                    case 7:
+                        /* TODO: Augmenter Vitesse */
+                        break;
+                    case 8:
+                        /* Retour */
+                        menu_state = MAIN_MENU;
+                        break;
+                    case 9:
+                        /* Lancer */
+                        ; /* Code pour dire "Lancer la partie" */
+                        break;
+                }
+                /*create_new_game(); */
                 break;
             case LOAD_GAME_MENU:
                 /*load_game();*/

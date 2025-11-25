@@ -24,17 +24,25 @@ typedef struct {
     int selected_button;
 } ButtonsList;
 
+
+
 void display_menu(
     WindowSize window_size,
     ButtonsList *buttons_list
 );
 
-void change_selected_button(ButtonsList *buttons_list, int selected_button);
-
 int handle_main_menu_navigation(ButtonsList *buttons_list);
 
+
+
+void display_new_game_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list
+);
+
+int handle_new_game_menu_navigation(ButtonsList *buttons_list);
+
 void create_new_game();       /* lance la suite d'éxecution pour générer une nouvelle partie */
-void display_new_game_menu(); /* affiche les options de jeu pour la nouvelle partie */
 void init_new_game();         /* initialise partie */
 
 void load_game();              /* lance la suite d'éxecution pour charger une partie enregistrée */
