@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "menu_display.h"
 
 void draw_button(Button button, int selected) {
     int text_width, text_height;
@@ -86,38 +86,6 @@ void display_menu(
 }
 
 
-int handle_main_menu_navigation(ButtonsList *buttons_list) {
-    ToucheClavier touche;
-    int selected_button;
-
-    touche = convert_key_to_enum(get_key_pressed());
-    switch (touche) {
-        /* Cas où on appuie sur la touche haut */
-        case UP:
-            buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
-            selected_button = -1;
-            break;
-
-        /* Cas où on appuie sur la touche bas */
-        case DOWN:
-        buttons_list->selected_button = (buttons_list->selected_button + 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
-            selected_button = -1;
-            break;
-
-        /* Cas où on appuie sur la touche entrée */
-        case ENTER:
-            selected_button = buttons_list->selected_button;
-            break;
-
-        /* Cas où on appuie sur une autre touche */
-        default:
-            selected_button = -1;
-            break;
-    }
-
-    return selected_button;
-    
-}
 
 void display_new_game_menu(
     WindowSize window_size,
@@ -241,74 +209,6 @@ void display_new_game_menu(
     buttons_list->nb_buttons++;
 }
 
-int handle_new_game_menu_navigation(ButtonsList *buttons_list) {
-    ToucheClavier touche;
-    int action = -1;
-
-    touche = convert_key_to_enum(get_key_pressed());
-    switch (touche) {
-        case UP:
-            if (buttons_list->selected_button >= 8) { /* Depuis Retour ou Lancer */
-                buttons_list->selected_button -= 2; /* Remonte à la grille */
-            } else if (buttons_list->selected_button >= 2) {
-                buttons_list->selected_button -= 2;
-            }
-            break;
-
-        case DOWN:
-            if (buttons_list->selected_button < 6) {
-                buttons_list->selected_button += 2;
-            } else if (buttons_list->selected_button < 8) {
-                /* Depuis la dernière ligne de la grille, va vers Retour ou Lancer */
-                /* Le bouton de gauche (6) va vers Retour (8), le droit (7) vers Lancer (9) */
-                buttons_list->selected_button += 2;
-            }
-            break;
-            
-        case LEFT:
-            if (buttons_list->selected_button == 9) {
-                 buttons_list->selected_button = 8; /* Lancer -> Retour */
-            } else if (buttons_list->selected_button % 2 == 1) {
-                buttons_list->selected_button -= 1;
-            }
-            break;
-            
-        case RIGHT:
-            if (buttons_list->selected_button == 8) {
-                 buttons_list->selected_button = 9; /* Retour -> Lancer */
-            } else if (buttons_list->selected_button % 2 == 0 && buttons_list->selected_button < 8) {
-                buttons_list->selected_button += 1;
-            }
-            break;
-
-        case ENTER:
-            action = buttons_list->selected_button;
-            break;
-
-        default:
-            action = -1;
-            break;
-    }
-
-    return action;
-}
 
 
-void create_new_game();       /* lance la suite d'éxecution pour générer une nouvelle partie */
-void init_new_game();         /* initialise partie */
 
-void load_game();              /* lance la suite d'éxecution pour charger une partie enregistrée */
-void display_load_game_menu(); /* affiche la liste des parties enregistrées */
-void init_game_from_slot();    /* charge la partie enregistrée depuis le slot sélectionné */
-void delete_game_from_slot();  /* supprime la partie enregistrée depuis le slot sélectionné */
-
-void start_game();             /* lance la suite d'éxecution pour démarrer la partie */
-void pause_game();             /* pause la partie */
-void resume_game();            /* reprend la partie */
-void quit_game();              /* quitte la partie */
-void save_game();              /* sauvegarde la partie */
-void display_game_over_menu(); /* affiche le menu de fin de partie */
-/* a voir si on le fait      void display_settings(); */  /*  affiche les paramètres */
-
-void display_scores_menu();
-void delete_score();

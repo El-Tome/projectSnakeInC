@@ -1,5 +1,6 @@
 #include "main.h"
-#include "menu.h"
+#include "menu_handler.h"
+#include "menu_display.h"
 #include <time.h>
 #include "game.h"
 
@@ -44,24 +45,8 @@ int main() {
             case MAIN_MENU:
                 display_menu(window_size, &buttons_list);
 
-                switch (handle_main_menu_navigation(&buttons_list)) {
-                    case 0:
-                        menu_state = NEW_GAME_MENU;
-                        buttons_list.selected_button = 1;
-                        break;
-                    case 1:
-                        menu_state = LOAD_GAME_MENU;
-                        break;
-                    case 2:
-                        menu_state = SCORES_MENU;
-                        break;
-                    case 3:
-                        quitter = 1;
-                        break;
-                    default:
-                        break;
-                }
-
+                /* Gestion des actions des boutons */
+                process_main_menu_actions(&buttons_list, &menu_state, &quitter);
                 break;
 
 
@@ -69,51 +54,7 @@ int main() {
                 display_new_game_menu(window_size, &buttons_list, &game.settings);
 
                 /* Gestion des actions des boutons */
-                switch(handle_new_game_menu_navigation(&buttons_list)) {
-                    case 0:
-                        game.settings.is_two_players = !game.settings.is_two_players;
-                        break;
-                    case 1:
-                        game.settings.has_walls = !game.settings.has_walls;
-                        break;
-                    case 2:
-                        if (game.settings.width > MIN_GRID_WIDTH) {
-                            game.settings.width--;
-                        }
-                        break;
-                    case 3:
-                        if (game.settings.width < MAX_GRID_WIDTH) {
-                            game.settings.width++;
-                        }
-                        break;
-                    case 4:
-                        if (game.settings.height > MIN_GRID_HEIGHT) {
-                            game.settings.height--;
-                        }
-                        break;
-                    case 5:
-                        if (game.settings.height < MAX_GRID_HEIGHT) {
-                            game.settings.height++;
-                        }
-                        break;
-                    case 6:
-                        if (game.settings.speed > MIN_SPEED) {
-                            game.settings.speed--;
-                        }
-                        break;
-                    case 7:
-                        if (game.settings.speed < MAX_SPEED) {
-                            game.settings.speed++;
-                        }
-                        break;
-                    case 8:
-                        menu_state = MAIN_MENU;
-                        break;
-                    case 9:
-                        /* Lancer */
-                        ; /* Code pour dire "Lancer la partie" */
-                        break;
-                }
+                process_new_game_menu_actions(&buttons_list, &game, &menu_state);
                 break;
 
                 
