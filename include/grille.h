@@ -7,7 +7,6 @@
 #define MIN_GRID_HEIGHT 10  /* Hauteur minimale en cases */
 
 #include <stdio.h>
-#include <stdlib.h>
 
 
 typedef enum {
@@ -36,8 +35,13 @@ typedef struct {
 
 
 /*Fonctions :*/
-/*
-void init_grid(Grid *grid, int has_borders)            - Initialise tableau
-*/
+Grid init_grid(int width, int height, int has_borders);
+
+void clear_grid(Grid *grid);
+
+CellType get_cell(Grid *grid, Position *p);
+
+void set_cell(Grid *grid, Position *p, CellType type);
+
 #endif
 

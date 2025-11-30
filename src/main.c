@@ -65,6 +65,8 @@ int main() {
                 /*display_scores_menu();*/
                 break;
             case IN_GAME:
+                
+
 
 
                 break;

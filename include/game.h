@@ -2,6 +2,9 @@
 #define SNAKE_GAME_H
 
 #include "grille.h"
+#include "main.h"
+#include "snake.h"
+
 #define MAX_SPEED 60
 #define MIN_SPEED 1
 
@@ -18,17 +21,18 @@ typedef struct {
 
 typedef struct {
     GameSettings settings;
-    Grid grid;
-    /*Snake snake;
-    Food food;
-    */
-    /*
+    Grid         grid;
+    GameState    state;
+    Snake        snake;
+
+    /*Food food;
     GameOver game_over;
-    GameState state;
     GameState previous_state;
     GameState next_state;
     */
 } Game;
+
+void init_game(Game *game);
 
 
 #endif

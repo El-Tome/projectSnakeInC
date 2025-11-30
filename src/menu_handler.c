@@ -148,6 +148,7 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             break;
         case ACTION_START_GAME:
             *menu_state = IN_GAME;
+            init_game(game);
             break;
         default:
             break;
