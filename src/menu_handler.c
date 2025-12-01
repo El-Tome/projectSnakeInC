@@ -105,7 +105,7 @@ void process_main_menu_actions(ButtonsList *buttons_list, MenuState *menu_state,
     }
 }
 
-void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuState *menu_state) {
+void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuState *menu_state, WindowSize *window_size) {
     switch(handle_new_game_menu_navigation(buttons_list)) {
         case ACTION_TOGGLE_2_PLAYERS:
             game->settings.is_two_players = !game->settings.is_two_players;
@@ -148,7 +148,7 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             break;
         case ACTION_START_GAME:
             *menu_state = IN_GAME;
-            init_game(game);
+            init_game(game, window_size);
             break;
         default:
             break;

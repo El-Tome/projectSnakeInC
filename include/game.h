@@ -2,6 +2,7 @@
 #define SNAKE_GAME_H
 
 #include "grille.h"
+#include "grid_display.h"
 #include "main.h"
 #include "snake.h"
 
@@ -32,7 +33,7 @@ typedef struct {
     */
 } Game;
 
-void init_game(Game *game);
+void init_game(Game *game, WindowSize *window_size);
 
 
 #endif

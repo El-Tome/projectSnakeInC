@@ -30,8 +30,18 @@ typedef enum {
     ACTION_START_GAME       = 9
 } NewGameMenuAction;
 
-void process_main_menu_actions(ButtonsList *buttons_list, MenuState *menu_state, int *quitter);
-void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuState *menu_state);
+void process_main_menu_actions(
+    ButtonsList *buttons_list, 
+    MenuState   *menu_state, 
+    int         *quitter
+);
+
+void process_new_game_menu_actions(
+    ButtonsList *buttons_list, 
+    Game        *game, 
+    MenuState   *menu_state, 
+    WindowSize  *window_size
+);
 
 
 #endif

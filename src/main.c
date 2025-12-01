@@ -54,7 +54,7 @@ int main() {
                 display_new_game_menu(window_size, &buttons_list, &game.settings);
 
                 /* Gestion des actions des boutons */
-                process_new_game_menu_actions(&buttons_list, &game, &menu_state);
+                process_new_game_menu_actions(&buttons_list, &game, &menu_state, &window_size);
                 break;
 
                 
@@ -65,9 +65,7 @@ int main() {
                 /*display_scores_menu();*/
                 break;
             case IN_GAME:
-                
-
-
+                draw_grid(&game.grid, window_size);
 
                 break;
             default:
