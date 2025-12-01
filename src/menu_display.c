@@ -1,6 +1,6 @@
 #include "menu_display.h"
 
-void draw_button(Button button, int selected) {
+void draw_button(Button button, int selected) {/*dessine et place les rectangles + le texte*/
     int text_width, text_height;
     
     if (selected) {
@@ -28,7 +28,7 @@ void draw_button(Button button, int selected) {
     );
 }
 
-void display_menu(
+void display_menu(                             /* affiche le menu*/
     WindowSize window_size,
     ButtonsList *buttons_list
 ) {
@@ -87,7 +87,7 @@ void display_menu(
 
 
 
-void display_new_game_menu(
+void display_new_game_menu( /* sert a afficher le menu de nouvelle partie*/
     WindowSize window_size,
     ButtonsList *buttons_list,
     GameSettings *settings
@@ -121,13 +121,13 @@ void display_new_game_menu(
     /* LIGNE 1 : Mode 2 joueurs et Murs */
     btn.top_left_x = start_x;
     btn.top_left_y = start_y;
-    strcpy(btn.text, settings->is_two_players ? "2 Joueurs: Oui" : "2 Joueurs: Non");
+    strcpy(btn.text, settings->is_two_players ? "2 Joueurs: Oui" : "2 Joueurs: Non"); /*si settings est a 1 is_two_players est = Oui sinon il est = à Non */
     draw_button(btn, buttons_list->selected_button == 0);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     btn.top_left_x += btn.width + btn.gap_width * 2;
-    strcpy(btn.text, settings->has_walls ? "Murs: Oui" : "Murs: Non");
+    strcpy(btn.text, settings->has_walls ? "Murs: Oui" : "Murs: Non");                /* pareil que pout two_player ci dessus*/
     draw_button(btn, buttons_list->selected_button == 1);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
@@ -135,7 +135,7 @@ void display_new_game_menu(
     /* LIGNE 2 : Taille X de la grille */
     /* Affichage de la taille actuelle de la grille */
     
-    sprintf(size_text, "Taille: %d x %d", settings->width, settings->height);
+    sprintf(size_text, "Taille: %d x %d", settings->width, settings->height); /*permet de démarrer la chaine de caractére*/
     MLV_get_size_of_text(size_text, &text_width, &text_height);
     
     text_x = start_x + total_menu_w / 2 - text_width / 2;
