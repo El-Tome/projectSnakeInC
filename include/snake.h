@@ -2,6 +2,7 @@
 #define SNAKE_H
 
 #include "grille.h"
+#include "controls.h"
 
 #define MAX_SNAKE_LENGTH 2000
 
@@ -9,7 +10,8 @@ typedef enum {
     DIR_UP,
     DIR_DOWN,
     DIR_LEFT,
-    DIR_RIGHT
+    DIR_RIGHT,
+    DIR_NONE
 } Direction;
 
 typedef struct {
@@ -24,6 +26,7 @@ typedef struct {
     int tail_index;                       /* Index de la queue dans le tableau */
     int length;                           /* Longueur actuelle */
     int is_alive;                         /* 1 = vivant, 0 = mort */
+    int has_next_direction;
 } Snake;
 
 /* 

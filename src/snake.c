@@ -62,7 +62,10 @@ int is_valid_direction_change(Direction current, Direction new_dir) {
 }
 
 void set_snake_direction(Snake *snake, Direction new_dir) {
-    if (is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir)) {
+    if (
+        is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir) &&
+        snake->has_next_direction == 0
+    ) {
         snake->segments[snake->head_index].direction = new_dir;
     }
 }

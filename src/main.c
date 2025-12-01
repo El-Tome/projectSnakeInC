@@ -1,4 +1,5 @@
 #include "main.h"
+#include "controls.h"
 #include "menu_handler.h"
 #include "menu_display.h"
 #include <time.h>
@@ -14,6 +15,8 @@ int main() {
     int         quitter;
     long        elapsed_ns;
     int         nb_frames;
+    ToucheClavier touche;
+    Direction   direction;
 
     struct timespec debut, fin;
 
@@ -29,6 +32,8 @@ int main() {
     game.settings.speed  = 15; 
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
+
+    direction = DIR_NONE;
 
     srand(time(NULL));
 
@@ -68,15 +73,59 @@ int main() {
                 /*display_scores_menu();*/
                 break;
             case IN_GAME:
-                nb_frames++;
+                switch (game.state) {
+                    case FREEZE_GAME_MENU:
+                        draw_grid(&game.grid, window_size);
 
-                if (nb_frames % (61 - game.settings.speed) == 0) {
-                    move_snake(&game.grid, &game.snake);
+                        touche = convert_key_to_enum(get_key_pressed());
 
-                    nb_frames = 0;
+                        switch (touche) {
+                            case UP:
+                            case DOWN:
+                            case LEFT:
+                            case RIGHT:
+                                game.state = PLAYING;
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+
+                    case PLAYING:
+                        nb_frames++;
+
+                        touche = convert_key_to_enum(get_key_pressed());
+                        switch (touche) {
+                            case UP:
+                            case DOWN:
+                            case LEFT:
+                            case RIGHT:
+                                set_snake_direction(&game.snake, direction);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (nb_frames % (61 - game.settings.speed) == 0) {
+                            move_snake(&game.grid, &game.snake);
+                            game.snake.has_next_direction = 0;
+
+                            nb_frames = 0;
+                        }
+                        draw_grid(&game.grid, window_size);
+
+                        break;
+                    case GAME_OVER_MENU:
+                        break;
+                    case PAUSE_MENU:
+                        break;
+                    case SAVE_MENU:
+                        break;
+                    default:
+                        break;
+                
                 }
-
-                draw_grid(&game.grid, window_size);
+               
 
 
                 break;

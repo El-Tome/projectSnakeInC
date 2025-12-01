@@ -9,7 +9,7 @@ typedef struct {
     int height;
 } CellSize;
 
-void draw_cell(Grid *grid, WindowSize window_size, Position *p, CellType cell);
+void draw_cell(CellSize cell_size, Position *p, CellType cell);
 
 void draw_grid(Grid *grid, WindowSize window_size);
 
