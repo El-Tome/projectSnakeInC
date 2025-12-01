@@ -16,7 +16,6 @@ int main() {
     long        elapsed_ns;
     int         nb_frames;
     ToucheClavier touche;
-    Direction   direction;
 
     struct timespec debut, fin;
 
@@ -32,8 +31,6 @@ int main() {
     game.settings.speed  = 15; 
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
-
-    direction = DIR_NONE;
 
     srand(time(NULL));
 
@@ -95,12 +92,19 @@ int main() {
                         nb_frames++;
 
                         touche = convert_key_to_enum(get_key_pressed());
+
                         switch (touche) {
                             case UP:
+                                set_snake_direction(&game.snake, DIR_UP);
+                                break;
                             case DOWN:
+                                set_snake_direction(&game.snake, DIR_DOWN);
+                                break;
                             case LEFT:
+                                set_snake_direction(&game.snake, DIR_LEFT);
+                                break;
                             case RIGHT:
-                                set_snake_direction(&game.snake, direction);
+                                set_snake_direction(&game.snake, DIR_RIGHT);
                                 break;
                             default:
                                 break;
