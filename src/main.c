@@ -3,6 +3,7 @@
 #include "menu_display.h"
 #include <time.h>
 #include "game.h"
+#include "snake.h"
 
 int main() {
     /* Déclaration des variables */
@@ -11,19 +12,21 @@ int main() {
     MenuState   menu_state;
     Game        game;
     int         quitter;
-    long elapsed_ns;
+    long        elapsed_ns;
+    int         nb_frames;
 
     struct timespec debut, fin;
 
     /* Initialisation des variables */
     menu_state = MAIN_MENU;
     quitter    = 0;
+    nb_frames  = 0;
     buttons_list.nb_buttons = 0;
     buttons_list.selected_button = 0;
 
     game.settings.width  = 20;
     game.settings.height = 15;
-    game.settings.speed  = 10; 
+    game.settings.speed  = 15; 
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
 
@@ -65,7 +68,16 @@ int main() {
                 /*display_scores_menu();*/
                 break;
             case IN_GAME:
+                nb_frames++;
+
+                if (nb_frames % (61 - game.settings.speed) == 0) {
+                    move_snake(&game.grid, &game.snake);
+
+                    nb_frames = 0;
+                }
+
                 draw_grid(&game.grid, window_size);
+
 
                 break;
             default:

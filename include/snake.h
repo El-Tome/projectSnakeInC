@@ -12,13 +12,17 @@ typedef enum {
     DIR_RIGHT
 } Direction;
 
+typedef struct {
+    Position position;
+    Direction direction;
+} Segment;
+
 /* Serpent = tableau de positions (buffer circulaire) */
 typedef struct {
-    Position segments[MAX_SNAKE_LENGTH];  /* Tableau statique contenant toutes les positions */
+    Segment segments[MAX_SNAKE_LENGTH];  /* Tableau statique contenant toutes les positions */
     int head_index;                       /* Index de la tête dans le tableau */
     int tail_index;                       /* Index de la queue dans le tableau */
     int length;                           /* Longueur actuelle */
-    Direction direction;                  /* Direction du déplacement en cours */
     int is_alive;                         /* 1 = vivant, 0 = mort */
 } Snake;
 
@@ -34,7 +38,7 @@ void init_snake(Grid *grid, Snake *snake, int initial_length);
  * Met à jour head_index et tail_index (circular buffer).
  * Ne gère PAS les collisions (vérifiées séparément).
  */
-void move_snake(Snake *snake);
+void move_snake(Grid *grid, Snake *snake);
 
 /* 
  * Fait grandir le serpent au prochain mouvement.
