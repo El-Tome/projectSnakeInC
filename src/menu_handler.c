@@ -1,37 +1,74 @@
 #include "menu_handler.h"
-
+/*#include "grille.h"*/
 MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
     ToucheClavier touche;
     MainMenuAction selected_button;
-
+    int x, y, n;
+    /* fonct Hugo Position p j'utilise position present dans grille.h */
+    
     touche = convert_key_to_enum(get_key_pressed());
     switch (touche) {
         /* Cas où on appuie sur la touche haut */
-        case UP:
-            buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
-            selected_button = ACTION_NONE_MAIN;
-            break;
+    case UP:
+        buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+        selected_button = ACTION_NONE_MAIN;
+        break;
 
         /* Cas où on appuie sur la touche bas */
-        case DOWN:
-        buttons_list->selected_button = (buttons_list->selected_button + 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
-            selected_button = ACTION_NONE_MAIN;
-            break;
+    case DOWN:
+       (buttons_list->selected_button + 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+        selected_button = ACTION_NONE_MAIN;
+        break;
 
         /* Cas où on appuie sur la touche entrée */
-        case ENTER:
-            selected_button = (MainMenuAction)buttons_list->selected_button;
-            break;
+    case ENTER:
+        selected_button = (MainMenuAction)buttons_list->selected_button;
+        break;
 
         /* Cas où on appuie sur une autre touche */
-        default:
-            selected_button = ACTION_NONE_MAIN;
-            break;
+    default:
+        selected_button = ACTION_NONE_MAIN;
+        break;
     }
+    
 
+    MLV_get_mouse_position(&x, &y);
+
+    for (n = 0; n < buttons_list->nb_buttons; n++) {
+        if (
+            (x >= buttons_list->buttons[n].top_left_x) &&
+            (x <= (buttons_list->buttons[n].top_left_x + buttons_list->buttons[n].width)) &&
+            
+            (y >= buttons_list->buttons[n].top_left_y &&
+            (y <= buttons_list->buttons[n].top_left_y+ buttons_list->buttons[n].height))
+        ) {
+            buttons_list->selected_button = n;
+        }
+    }
+        
+    
+   
     return selected_button;
     
 }
+
+       
+/*prendre la position de la souris, si la souris est sur un boutton, le passer en selected_button a la position de la souris si cliqué, retourner */
+    /* truc que Hugo prend pour essayer de la crée
+       
+       void MLV_get_mouse_position ( int * x,
+		int * y 
+	) 		
+
+Renvoie la position courante de la souris.
+
+
+MLV_Button_state MLV_get_mouse_button_state ( MLV_Mouse_button mouse_button ) 	
+
+Renvoie l'état (préssé ou relaché) d'un bouton de la souris. 
+
+    */
+  
 
 NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
     ToucheClavier touche;
