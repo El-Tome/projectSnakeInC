@@ -46,27 +46,47 @@ Position get_head_position(Snake snake) {
 
 /* Vérifie si la direction demandée n'est pas l'opposée de l'actuelle */
 int is_valid_direction_change(Direction current, Direction new_dir) {
+    int valid = 1;
     /* Si la direction demandée est l'opposée de l'actuelle, on retourne 0 */
-    if (current == DIR_UP && new_dir == DIR_DOWN) {
-        return 0;
+    if (new_dir == DIR_NONE) {
+        valid = 0;
+    } else if (current == DIR_UP && new_dir == DIR_DOWN) {
+        valid = 0;
     } else if (current == DIR_DOWN && new_dir == DIR_UP) {
-        return 0;
+        valid = 0;
     } else if (current == DIR_LEFT && new_dir == DIR_RIGHT) {
-        return 0;
+        valid = 0;
     } else if (current == DIR_RIGHT && new_dir == DIR_LEFT) {
-        return 0;
-    } else {
-        /* Si la direction demandée n'est pas l'opposée de l'actuelle, c'est valide */
-        return 1;
+        valid = 0;
     }
+
+    return valid;
 }
 
 void set_snake_direction(Snake *snake, Direction new_dir) {
+    /* Si la direction demandée est valide on la met à jour et on vide le buffer */
     if (
         is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir) &&
         snake->has_next_direction == 0
     ) {
         snake->segments[snake->head_index].direction = new_dir;
+        snake->has_next_direction = 1;
+        snake->buffer             = DIR_NONE;
+
+    /* Si le buffer n'est pas vide et la direction demandée est valide, on la met à jour */
+    } else if (
+        snake->has_next_direction == 0 &&
+        snake->buffer != DIR_NONE &&
+        is_valid_direction_change(snake->segments[snake->head_index].direction, snake->buffer)
+    ) {
+        snake->segments[snake->head_index].direction = snake->buffer;
+        snake->buffer = DIR_NONE;
+    } else if (
+        snake->has_next_direction == 1 &&
+        snake->buffer == DIR_NONE &&
+        is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir)
+    ) {
+        snake->buffer = new_dir;
     }
 }
 

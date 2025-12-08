@@ -27,6 +27,7 @@ typedef struct {
     int length;                           /* Longueur actuelle */
     int is_alive;                         /* 1 = vivant, 0 = mort */
     int has_next_direction;
+    Direction buffer;
 } Snake;
 
 /* 

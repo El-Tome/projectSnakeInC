@@ -107,6 +107,7 @@ int main() {
                                 set_snake_direction(&game.snake, DIR_RIGHT);
                                 break;
                             default:
+                                set_snake_direction(&game.snake, DIR_NONE);
                                 break;
                         }
 
