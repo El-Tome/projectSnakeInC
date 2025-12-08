@@ -1,9 +1,26 @@
 #include "menu_handler.h"
 /*#include "grille.h"*/
+
+void position_souris(ButtonsList *buttons_list){
+    int x, y, n;
+    MLV_get_mouse_position(&x, &y);
+    for (n = 0; n < buttons_list->nb_buttons; n++) {
+        if (
+            (x >= buttons_list->buttons[n].top_left_x) &&
+            (x <= (buttons_list->buttons[n].top_left_x + buttons_list->buttons[n].width)) &&
+            
+            (y >= buttons_list->buttons[n].top_left_y &&
+             (y <= buttons_list->buttons[n].top_left_y+ buttons_list->buttons[n].height))
+            ) {
+            buttons_list->selected_button = n;
+        }
+    }
+}
+
 MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
     ToucheClavier touche;
     MainMenuAction selected_button;
-    int x, y, n;
+
     /* fonct Hugo Position p j'utilise position present dans grille.h */
     
     touche = convert_key_to_enum(get_key_pressed());
@@ -30,44 +47,19 @@ MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
         selected_button = ACTION_NONE_MAIN;
         break;
     }
+
     
-
-    MLV_get_mouse_position(&x, &y);
-
-    for (n = 0; n < buttons_list->nb_buttons; n++) {
-        if (
-            (x >= buttons_list->buttons[n].top_left_x) &&
-            (x <= (buttons_list->buttons[n].top_left_x + buttons_list->buttons[n].width)) &&
-            
-            (y >= buttons_list->buttons[n].top_left_y &&
-            (y <= buttons_list->buttons[n].top_left_y+ buttons_list->buttons[n].height))
-        ) {
-            buttons_list->selected_button = n;
-        }
+    position_souris(buttons_list);
+ 
+    if( MLV_get_mouse_button_state( MLV_BUTTON_LEFT ) == MLV_PRESSED ){
+        selected_button = (MainMenuAction)buttons_list->selected_button;
     }
-        
-    
-   
+
+
     return selected_button;
     
 }
 
-       
-/*prendre la position de la souris, si la souris est sur un boutton, le passer en selected_button a la position de la souris si cliqué, retourner */
-    /* truc que Hugo prend pour essayer de la crée
-       
-       void MLV_get_mouse_position ( int * x,
-		int * y 
-	) 		
-
-Renvoie la position courante de la souris.
-
-
-MLV_Button_state MLV_get_mouse_button_state ( MLV_Mouse_button mouse_button ) 	
-
-Renvoie l'état (préssé ou relaché) d'un bouton de la souris. 
-
-    */
   
 
 NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
