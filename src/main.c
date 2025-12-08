@@ -31,6 +31,7 @@ int main() {
     game.settings.speed  = 15; 
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
+    game.food_list.food_count    = 0;
 
     srand(time(NULL));
 
@@ -111,7 +112,7 @@ int main() {
                                 break;
                         }
 
-                        if (nb_frames % (61 - game.settings.speed) == 0) {
+                        if (nb_frames % (31 - game.settings.speed) == 0) {
                             move_snake(&game.grid, &game.snake);
                             game.snake.has_next_direction = 0;
 

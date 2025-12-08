@@ -5,6 +5,7 @@
 #define MAX_GRID_HEIGHT 30  /* Hauteur en cases */
 #define MIN_GRID_WIDTH 10   /* Largeur minimale en cases */
 #define MIN_GRID_HEIGHT 10  /* Hauteur minimale en cases */
+#define NB_CELLS 1200
 
 #include <stdio.h>
 

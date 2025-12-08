@@ -9,7 +9,8 @@ void init_game(Game *game, WindowSize *window_size) {
     init_snake(&game->grid, &game->snake, 3);
 
     /* placement de la nourriture */
-
+    spawn_food(&game->grid, &game->food_list, 1, 1);
+    
     draw_grid(&game->grid, *window_size);
 }
 

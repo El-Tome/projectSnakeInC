@@ -5,6 +5,7 @@
 #include "grid_display.h"
 #include "main.h"
 #include "snake.h"
+#include "food.h"
 
 #define MAX_SPEED 60
 #define MIN_SPEED 1
@@ -25,8 +26,10 @@ typedef struct {
     Grid         grid;
     GameState    state;
     Snake        snake;
+    FoodList     food_list;
 
-    /*Food food;
+
+    /*
     GameOver game_over;
     GameState previous_state;
     GameState next_state;
