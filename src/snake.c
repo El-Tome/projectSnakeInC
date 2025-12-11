@@ -137,6 +137,80 @@ void move_snake(Grid *grid, Snake *snake) {
     snake->tail_index = (snake->tail_index + 1) % MAX_SNAKE_LENGTH;
 }
 
+void grow_snake(Grid *grid, Snake *snake) {
+    /* 1. Calculer la nouvelle position de la tête */
+    Segment current_head = snake->segments[snake->head_index];
+    Segment new_head     = current_head;
+
+    switch (snake->segments[snake->head_index].direction) {
+        case DIR_UP:
+            new_head.position.y -= 1;
+            if (new_head.position.y < 0) {
+                new_head.position.y = grid->height - 1;
+            }
+            break;
+        case DIR_DOWN:  
+            new_head.position.y += 1; 
+            if (new_head.position.y >= grid->height) {
+                new_head.position.y = 0;
+            }
+            break;
+        case DIR_LEFT:  
+            new_head.position.x -= 1; 
+            if (new_head.position.x < 0) {
+                new_head.position.x = grid->width - 1;
+            }
+            break;
+        case DIR_RIGHT: 
+            new_head.position.x += 1; 
+            if (new_head.position.x >= grid->width) {
+                new_head.position.x = 0;
+            }
+            break;
+        default:
+            break;
+    }
+
+    /* 2. Avancer l'index de la tête (Circulaire) */
+    snake->head_index = (snake->head_index + 1) % MAX_SNAKE_LENGTH;
+
+    /* 3. Écrire la nouvelle position */
+    snake->segments[snake->head_index] = new_head;
+    set_cell(grid, &new_head.position, CELL_SNAKE);
+
+   snake->length++;
+}
+
+
+/* On récupére la valeur de la cellule suivante */
+CellType get_next_cell_value(Grid *grid, Snake *snake) {
+    Position next_position;
+    next_position.x = snake->segments[snake->head_index].position.x;
+    next_position.y = snake->segments[snake->head_index].position.y;
+
+    switch (snake->segments[snake->head_index].direction) {
+        case DIR_UP:
+            next_position.y -= 1;
+            break;
+        case DIR_DOWN:
+            next_position.y += 1;
+            break;
+        case DIR_LEFT:
+            next_position.x -= 1;
+            break;
+        case DIR_RIGHT:
+            next_position.x += 1;
+            break;
+        default:
+            break;
+    }
+
+    if (next_position.x < 0 || next_position.x >= grid->width || next_position.y < 0 || next_position.y >= grid->height) {
+        return CELL_WALL;
+    }
+
+    return get_cell(grid, &next_position);
+}
 
 /* Vérifie collision avec soi-même */
 int check_self_collision(Snake snake) {

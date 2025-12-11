@@ -113,8 +113,38 @@ int main() {
                         }
 
                         if (nb_frames % (31 - game.settings.speed) == 0) {
-                            move_snake(&game.grid, &game.snake);
-                            game.snake.has_next_direction = 0;
+                            /* Check le prochain déplacement */
+
+                            /* switch */
+                            /* si en mode mur il y a collision alors game over */
+                            /* il y a collision avec la nourriture alors grandir le serpent */
+                            /* il y a collision avec soi-même alors game over */
+                            /* Sinon déplacer le serpent */
+                            switch (get_next_cell_value(&game.grid, &game.snake)) {
+                                case CELL_EMPTY:
+                                    move_snake(&game.grid, &game.snake);
+                                    game.snake.has_next_direction = 0;
+                                    break;
+                                case CELL_FOOD:
+                                    grow_snake(&game.grid, &game.snake);
+                                    game.snake.has_next_direction = 0;
+                                    spawn_food(&game.grid, &game.food_list, 1, 1);
+                                    break;
+                                case CELL_WALL:
+                                    if (game.settings.has_walls) {
+                                        game.state = GAME_OVER_MENU;
+                                    } else {
+                                        move_snake(&game.grid, &game.snake);
+                                        game.snake.has_next_direction = 0;
+                                    }
+                                    break;
+                                case CELL_SNAKE:
+                                    menu_state = MAIN_MENU;
+                                    break;
+                                default:
+                                    break;
+                            }
+
 
                             nb_frames = 0;
                         }

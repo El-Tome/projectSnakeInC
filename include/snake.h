@@ -44,6 +44,9 @@ void init_snake(Grid *grid, Snake *snake, int initial_length);
  */
 void move_snake(Grid *grid, Snake *snake);
 
+/* On récupére la valeur de la cellule suivante */
+CellType get_next_cell_value(Grid *grid, Snake *snake);
+
 /* 
  * Fait grandir le serpent au prochain mouvement.
  * En pratique: on n'incrémentera pas tail_index au prochain move,
@@ -57,7 +60,7 @@ void move_snake(Grid *grid, Snake *snake);
  * Simplification ici: on va dire que grow_snake ajoute un segment immédiatement
  * à la position de la queue actuelle (duplication temporaire de la queue).
  */
-void grow_snake(Snake *snake);
+void grow_snake(Grid *grid, Snake *snake);
 
 /* Vérifie si la tête du serpent percute son propre corps */
 int check_self_collision(Snake snake);
