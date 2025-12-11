@@ -173,7 +173,7 @@ int main() {
         clock_gettime(CLOCK_REALTIME, &fin);
 
         elapsed_ns = (fin.tv_nsec - debut.tv_nsec);
-        if (elapsed_ns < FRAME_TIME_NS) {
+        if (elapsed_ns < FRAME_TIME_NS && fin.tv_nsec > debut.tv_nsec) {
             MLV_wait_milliseconds((FRAME_TIME_NS - elapsed_ns) / NANOS_TO_MILLIS);
         }
         /*
