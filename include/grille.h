@@ -15,7 +15,9 @@ typedef enum {
     CELL_SNAKE,
     CELL_FOOD,
     CELL_WALL,
-    CELL_BONUS
+    CELL_BONUS,
+    CELLE_SHADOW,
+    CELL_PATES
 } CellType;
 
 /* Tableau  2D statique */
