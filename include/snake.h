@@ -62,9 +62,6 @@ CellType get_next_cell_value(Grid *grid, Snake *snake);
  */
 void grow_snake(Grid *grid, Snake *snake);
 
-/* Vérifie si la tête du serpent percute son propre corps */
-int check_self_collision(Snake snake);
-
 /* Change la direction si le changement est valide (pas de demi-tour immédiat) */
 void set_snake_direction(Snake *snake, Direction new_dir);
 

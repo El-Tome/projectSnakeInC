@@ -40,6 +40,12 @@ void display_new_game_menu(
     GameSettings *settings
 );
 
+void display_game_over_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    Game *game
+);
+
 
 
 

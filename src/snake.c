@@ -211,18 +211,3 @@ CellType get_next_cell_value(Grid *grid, Snake *snake) {
 
     return get_cell(grid, &next_position);
 }
-
-/* Vérifie collision avec soi-même */
-int check_self_collision(Snake snake) {
-    Position head = get_head_position(snake);
-
-    /* On parcourt tout le corps (sauf la tête elle-même, donc on commence offset 1) */
-    /*int i;
-    for (i = 1; i < snake.length; i++) {
-        Position body_part = get_segment_position(snake, i);
-        if (head.x == body_part.x && head.y == body_part.y) {
-            return 1;  *//* Collision */
-        /*}
-    }*/
-    return 0;
-}

@@ -23,7 +23,7 @@ MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
 
     /* fonct Hugo Position p j'utilise position present dans grille.h */
     
-    touche = convert_key_to_enum(get_key_pressed());
+    touche = get_event();
     switch (touche) {
         /* Cas où on appuie sur la touche haut */
     case UP:
@@ -33,12 +33,13 @@ MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
 
         /* Cas où on appuie sur la touche bas */
     case DOWN:
-       (buttons_list->selected_button + 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+        buttons_list->selected_button = (buttons_list->selected_button + 1) % buttons_list->nb_buttons;
         selected_button = ACTION_NONE_MAIN;
         break;
 
-        /* Cas où on appuie sur la touche entrée */
+        /* Cas où on appuie sur la touche entrée ou clic souris */
     case ENTER:
+    case MOUSE_LEFT_CLICK:
         selected_button = (MainMenuAction)buttons_list->selected_button;
         break;
 
@@ -51,11 +52,6 @@ MainMenuAction handle_main_menu_navigation(ButtonsList *buttons_list) {
     
     position_souris(buttons_list);
  
-    if( MLV_get_mouse_button_state( MLV_BUTTON_LEFT ) == MLV_PRESSED ){
-        selected_button = (MainMenuAction)buttons_list->selected_button;
-    }
-
-
     return selected_button;
     
 }
@@ -66,7 +62,7 @@ NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
     ToucheClavier touche;
     NewGameMenuAction action = ACTION_NONE_NEW_GAME;
 
-    touche = convert_key_to_enum(get_key_pressed());
+    touche = get_event();
     switch (touche) {
         case UP:
             if (buttons_list->selected_button >= 8) { /* Depuis Retour ou Lancer */
@@ -103,6 +99,7 @@ NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
             break;
 
         case ENTER:
+        case MOUSE_LEFT_CLICK:
             action = (NewGameMenuAction)buttons_list->selected_button;
             break;
 
@@ -111,6 +108,33 @@ NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
             break;
     }
 
+    position_souris(buttons_list);
+ 
+    return action;
+}
+
+GameOverMenuAction handle_game_over_menu_navigation(ButtonsList *buttons_list) {
+    ToucheClavier touche;
+    GameOverMenuAction action = ACTION_NONE_GAME_OVER;
+
+    touche = get_event();
+    switch (touche) {
+        case UP:
+            buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+            break;
+        case DOWN:
+            buttons_list->selected_button = (buttons_list->selected_button + 1) % buttons_list->nb_buttons;
+            break;
+        case ENTER:
+        case MOUSE_LEFT_CLICK:
+            action = (GameOverMenuAction)buttons_list->selected_button;
+            break;
+        default:
+            break;
+    }
+
+    position_souris(buttons_list);
+
     return action;
 }
 
@@ -118,7 +142,7 @@ void process_main_menu_actions(ButtonsList *buttons_list, MenuState *menu_state,
     switch (handle_main_menu_navigation(buttons_list)) {
         case ACTION_NEW_GAME:
             *menu_state = NEW_GAME_MENU;
-            buttons_list->selected_button = 1;
+            buttons_list->selected_button = 0;
             break;
         case ACTION_LOAD_GAME:
             *menu_state = LOAD_GAME_MENU;
@@ -174,10 +198,27 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             break;
         case ACTION_BACK_MAIN:
             *menu_state = MAIN_MENU;
+            buttons_list->selected_button = 0;
             break;
         case ACTION_START_GAME:
             *menu_state = IN_GAME;
+            game->state = FREEZE_GAME_MENU;
             init_game(game, window_size);
+            break;
+        default:
+            break;
+    }
+}
+
+void process_game_over_menu_actions(ButtonsList *buttons_list, Game *game, MenuState *menu_state, WindowSize *window_size) {
+    switch(handle_game_over_menu_navigation(buttons_list)) {
+        case ACTION_REPLAY:
+            game->state = FREEZE_GAME_MENU;
+            init_game(game, window_size);
+            break;
+        case ACTION_BACK_TO_MENU:
+            *menu_state = MAIN_MENU;
+            buttons_list->selected_button = 0;
             break;
         default:
             break;

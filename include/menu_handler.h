@@ -30,6 +30,12 @@ typedef enum {
     ACTION_START_GAME       = 9
 } NewGameMenuAction;
 
+typedef enum {
+    ACTION_NONE_GAME_OVER = -1,
+    ACTION_REPLAY         = 0,
+    ACTION_BACK_TO_MENU   = 1
+} GameOverMenuAction;
+
 void process_main_menu_actions(
     ButtonsList *buttons_list, 
     MenuState   *menu_state, 
@@ -40,6 +46,13 @@ void process_new_game_menu_actions(
     ButtonsList *buttons_list, 
     Game        *game, 
     MenuState   *menu_state, 
+    WindowSize  *window_size
+);
+
+void process_game_over_menu_actions(
+    ButtonsList *buttons_list,
+    Game        *game,
+    MenuState   *menu_state,
     WindowSize  *window_size
 );
 

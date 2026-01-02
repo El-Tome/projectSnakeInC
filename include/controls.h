@@ -10,13 +10,17 @@ typedef enum {
     RIGHT,
     LEFT,
     ESCAPE,
-    ENTER
+    ENTER,
+    MOUSE_LEFT_CLICK,
+    MOUSE_RIGHT_CLICK
 } ToucheClavier;
 
 
 MLV_Keyboard_button get_key_pressed();
 
 ToucheClavier convert_key_to_enum(MLV_Keyboard_button key);
+
+ToucheClavier get_event();
 
 void clear_event();
 

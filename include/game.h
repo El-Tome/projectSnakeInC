@@ -18,7 +18,7 @@ typedef struct {
     int speed;
     int is_two_players;
     int has_walls;
-    
+    int initial_length;
 } GameSettings;
 
 typedef struct {

@@ -209,6 +209,62 @@ void display_new_game_menu(
     buttons_list->nb_buttons++;
 }
 
+void display_game_over_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    Game *game
+) {
+    Button btn;
+    int total_menu_h;
+    char score_text[50];
+    int text_width, text_height;
+
+    /* Affichage du titre "GAME OVER" */
+    MLV_get_size_of_text("GAME OVER", &text_width, &text_height);
+    MLV_draw_text(
+        (window_size.width - text_width) / 2,
+        window_size.height / 4,
+        "GAME OVER", MLV_COLOR_RED
+    );
+
+    /* Affichage du score */
+    sprintf(score_text, "Score: %d", (game->snake.length - game->settings.initial_length) * game->settings.speed);
+    MLV_get_size_of_text(score_text, &text_width, &text_height);
+    MLV_draw_text(
+        (window_size.width - text_width) / 2,
+        window_size.height / 3,
+        score_text, MLV_COLOR_WHITE
+    );
+
+    /* Dimensions et positions relatives (en pourcentage) */
+    btn.width      = window_size.width  / 4;   /* Largeur : 25% de l'écran */
+    btn.gap_width  = window_size.width  / 50;  /* Espace horizontal : 2% de l'écran */
+    btn.height     = window_size.height / 10;  /* Hauteur : 10% de l'écran */
+    btn.gap_height = window_size.height / 50;  /* Espace vertical : 2% de l'écran */
+
+    /* Calcul du point X horizontal pour centrer le bouton */
+    btn.top_left_x = (window_size.width - btn.width) / 2;
+    
+    /* Centrage vertical des deux boutons */
+    total_menu_h   = (2 * btn.height) + (1 * btn.gap_height);
+    btn.top_left_y = (window_size.height - total_menu_h) / 2 + btn.height;
+
+    buttons_list->nb_buttons = 0;
+
+    /* Bouton Rejouer */
+    strcpy(btn.text, "Rejouer");
+    draw_button(btn, buttons_list->selected_button == 0);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+
+    /* Bouton Retour au Menu */
+    btn.top_left_y += btn.height + btn.gap_height;
+    strcpy(btn.text, "Retour au Menu");
+    draw_button(btn, buttons_list->selected_button == 1);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+}
+
 
 
 

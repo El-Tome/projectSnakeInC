@@ -29,6 +29,7 @@ int main() {
     game.settings.width  = 20;
     game.settings.height = 15;
     game.settings.speed  = 15; 
+    game.settings.initial_length  = 3;
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
     game.food_list.food_count    = 0;
@@ -133,13 +134,15 @@ int main() {
                                 case CELL_WALL:
                                     if (game.settings.has_walls) {
                                         game.state = GAME_OVER_MENU;
+                                        buttons_list.selected_button = 0;
                                     } else {
                                         move_snake(&game.grid, &game.snake);
                                         game.snake.has_next_direction = 0;
                                     }
                                     break;
                                 case CELL_SNAKE:
-                                    menu_state = MAIN_MENU;
+                                    game.state = GAME_OVER_MENU;
+                                    buttons_list.selected_button = 0;
                                     break;
                                 default:
                                     break;
@@ -152,6 +155,8 @@ int main() {
 
                         break;
                     case GAME_OVER_MENU:
+                        display_game_over_menu(window_size, &buttons_list, &game);
+                        process_game_over_menu_actions(&buttons_list, &game, &menu_state, &window_size);
                         break;
                     case PAUSE_MENU:
                         break;
