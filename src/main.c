@@ -81,7 +81,7 @@ int main() {
             case IN_GAME:
                 switch (game.state) {
                     case FREEZE_GAME_MENU:
-                        draw_grid(&game.grid, window_size);
+                        draw_game(&game, &window_size);
 
                         touche = convert_key_to_enum(get_key_pressed());
 
@@ -99,6 +99,9 @@ int main() {
 
                     case PLAYING:
                         nb_frames++;
+                        
+                        /* Mise à jour de l'animation à chaque frame */
+                        update_snake_animation(&game.snake_animation);
 
                         touche = convert_key_to_enum(get_key_pressed());
 
@@ -132,10 +135,12 @@ int main() {
                                 case CELL_EMPTY:
                                     move_snake(&game.grid, &game.snake);
                                     game.snake.has_next_direction = 0;
+                                    reset_snake_animation(&game.snake_animation);
                                     break;
                                 case CELL_FOOD:
                                     grow_snake(&game.grid, &game.snake);
                                     game.snake.has_next_direction = 0;
+                                    reset_snake_animation(&game.snake_animation);
                                     spawn_food(&game.grid, &game.food_list, 1, 1);
                                     break;
                                 case CELL_WALL:
@@ -151,6 +156,7 @@ int main() {
                                     } else {
                                         move_snake(&game.grid, &game.snake);
                                         game.snake.has_next_direction = 0;
+                                        reset_snake_animation(&game.snake_animation);
                                     }
                                     break;
                                 case CELL_SNAKE:
@@ -170,7 +176,7 @@ int main() {
 
                             nb_frames = 0;
                         }
-                        draw_grid(&game.grid, window_size);
+                        draw_game(&game, &window_size);
 
                         break;
                     case GAME_OVER_MENU:
@@ -212,6 +218,7 @@ int main() {
         */
     }
 
+    free_game(&game);
     MLV_free_window ();
 
 
