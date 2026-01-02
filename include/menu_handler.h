@@ -36,6 +36,12 @@ typedef enum {
     ACTION_BACK_TO_MENU   = 1
 } GameOverMenuAction;
 
+typedef enum {
+    ACTION_NONE_SCORES    = -1,
+    ACTION_SCORES_BACK    = -2,
+    ACTION_SCORES_DELETE  = 0  /* >= 0 = index du score a supprimer */
+} ScoresMenuAction;
+
 void process_main_menu_actions(
     ButtonsList *buttons_list, 
     MenuState   *menu_state, 
@@ -56,5 +62,10 @@ void process_game_over_menu_actions(
     WindowSize  *window_size
 );
 
+void process_scores_menu_actions(
+    ButtonsList *buttons_list,
+    MenuState   *menu_state,
+    ScoreBoard  *score_board
+);
 
 #endif

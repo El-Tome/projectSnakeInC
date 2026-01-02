@@ -27,7 +27,7 @@ typedef struct {
     GameState    state;
     Snake        snake;
     FoodList     food_list;
-
+    int          score;
 
     /*
     GameOver game_over;

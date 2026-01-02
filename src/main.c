@@ -5,6 +5,7 @@
 #include <time.h>
 #include "game.h"
 #include "snake.h"
+#include "score.h"
 
 int main() {
     /* Déclaration des variables */
@@ -16,6 +17,8 @@ int main() {
     long        elapsed_ns;
     int         nb_frames;
     ToucheClavier touche;
+    ScoreEntry score_entry;
+    ScoreBoard score_board;
 
     struct timespec debut, fin;
 
@@ -33,6 +36,9 @@ int main() {
     game.settings.is_two_players = 0;
     game.settings.has_walls      = 0;
     game.food_list.food_count    = 0;
+
+    init_score_board(&score_board);
+    load_scores(&score_board);
 
     srand(time(NULL));
 
@@ -69,7 +75,8 @@ int main() {
                 /*load_game();*/
                 break;
             case SCORES_MENU:
-                /*display_scores_menu();*/
+                display_scores_menu(window_size, &buttons_list, &score_board);
+                process_scores_menu_actions(&buttons_list, &menu_state, &score_board);
                 break;
             case IN_GAME:
                 switch (game.state) {
@@ -135,6 +142,12 @@ int main() {
                                     if (game.settings.has_walls) {
                                         game.state = GAME_OVER_MENU;
                                         buttons_list.selected_button = 0;
+
+                                        /* Calcul et sauvegarde du score */
+                                        game.score = (game.snake.length - game.settings.initial_length) * game.settings.speed;
+                                        score_entry = create_score_entry(game.score, &game.settings);
+                                        add_score(&score_board, &score_entry);
+                                        save_scores(&score_board);
                                     } else {
                                         move_snake(&game.grid, &game.snake);
                                         game.snake.has_next_direction = 0;
@@ -143,6 +156,12 @@ int main() {
                                 case CELL_SNAKE:
                                     game.state = GAME_OVER_MENU;
                                     buttons_list.selected_button = 0;
+
+                                    /* Calcul et sauvegarde du score */
+                                    game.score = (game.snake.length - game.settings.initial_length) * game.settings.speed;
+                                    score_entry = create_score_entry(game.score, &game.settings);
+                                    add_score(&score_board, &score_entry);
+                                    save_scores(&score_board);
                                     break;
                                 default:
                                     break;

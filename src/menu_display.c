@@ -1,4 +1,5 @@
 #include "menu_display.h"
+#include <stdio.h>
 
 void draw_button(Button button, int selected) {
     int text_width, text_height;
@@ -219,6 +220,8 @@ void display_game_over_menu(
     char score_text[50];
     int text_width, text_height;
 
+    game->score = (game->snake.length - game->settings.initial_length) * game->settings.speed;
+
     /* Affichage du titre "GAME OVER" */
     MLV_get_size_of_text("GAME OVER", &text_width, &text_height);
     MLV_draw_text(
@@ -228,7 +231,7 @@ void display_game_over_menu(
     );
 
     /* Affichage du score */
-    sprintf(score_text, "Score: %d", (game->snake.length - game->settings.initial_length) * game->settings.speed);
+    sprintf(score_text, "Score: %d", game->score);
     MLV_get_size_of_text(score_text, &text_width, &text_height);
     MLV_draw_text(
         (window_size.width - text_width) / 2,
@@ -265,6 +268,88 @@ void display_game_over_menu(
     buttons_list->nb_buttons++;
 }
 
+void display_scores_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    ScoreBoard *score_board
+) {
+    Button btn;
+    int title_width, title_height;
+    int i;
+    int start_y;
+    int line_height;
+    char line_text[150];
+    int text_width, text_height;
+    const ScoreEntry *entry;
+    MLV_Color color;
 
+    /* Affichage du titre */
+    MLV_get_size_of_text("Meilleurs Scores", &title_width, &title_height);
+    MLV_draw_text(
+        (window_size.width - title_width) / 2,
+        window_size.height / 10,
+        "Meilleurs Scores", MLV_COLOR_WHITE
+    );
 
+    /* Parametres d'affichage de la liste */
+    line_height = window_size.height / 18;
+    start_y = window_size.height / 5;
 
+    buttons_list->nb_buttons = 0;
+
+    /* Affichage des scores (chaque score est selectionnable) */
+    if (score_board->count == 0) {
+        MLV_get_size_of_text("Aucun score enregistre", &text_width, &text_height);
+        MLV_draw_text(
+            (window_size.width - text_width) / 2,
+            start_y + line_height * 2,
+            "Aucun score enregistre", MLV_COLOR_GREY
+        );
+    } else {
+        for (i = 0; i < score_board->count; i++) {
+            entry = get_score_entry(score_board, i);
+            if (entry != NULL) {
+                sprintf(line_text, "%d. Score: %d  |  %dx%d  |  Vitesse: %d  |  Murs: %s",
+                    i + 1,
+                    entry->score,
+                    entry->width,
+                    entry->height,
+                    entry->speed,
+                    entry->has_walls ? "Oui" : "Non"
+                );
+                MLV_get_size_of_text(line_text, &text_width, &text_height);
+                
+                /* Surbrillance si selectionne */
+                color = (buttons_list->selected_button == i) ? MLV_COLOR_RED : MLV_COLOR_WHITE;
+                
+                MLV_draw_text(
+                    (window_size.width - text_width) / 2,
+                    start_y + line_height * i,
+                    line_text, color
+                );
+                
+                /* Enregistre comme bouton cliquable */
+                btn.top_left_x = (window_size.width - text_width) / 2;
+                btn.top_left_y = start_y + line_height * i;
+                btn.width = text_width;
+                btn.height = text_height;
+                buttons_list->buttons[buttons_list->nb_buttons] = btn;
+                buttons_list->nb_buttons++;
+            }
+        }
+    }
+
+    /* Bouton Retour en bas */
+    btn.width      = window_size.width  / 6;
+    btn.gap_width  = window_size.width  / 50;
+    btn.height     = window_size.height / 15;
+    btn.gap_height = window_size.height / 40;
+
+    btn.top_left_x = (window_size.width - btn.width) / 2;
+    btn.top_left_y = window_size.height - btn.height - (btn.gap_height * 4);
+    
+    strcpy(btn.text, "Retour");
+    draw_button(btn, buttons_list->selected_button == score_board->count);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+}

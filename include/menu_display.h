@@ -8,6 +8,7 @@
 #include <string.h>
 #include <MLV/MLV_all.h>
 #include "game.h"
+#include "score.h"
 
 
 typedef struct {
@@ -46,7 +47,10 @@ void display_game_over_menu(
     Game *game
 );
 
-
-
+void display_scores_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    ScoreBoard *score_board
+);
 
 #endif

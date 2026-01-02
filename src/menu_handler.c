@@ -1,4 +1,5 @@
 #include "menu_handler.h"
+#include "score.h"
 /*#include "grille.h"*/
 
 void position_souris(ButtonsList *buttons_list){
@@ -222,5 +223,59 @@ void process_game_over_menu_actions(ButtonsList *buttons_list, Game *game, MenuS
             break;
         default:
             break;
+    }
+}
+
+ScoresMenuAction handle_scores_menu_navigation(ButtonsList *buttons_list, int score_count) {
+    ToucheClavier touche;
+    ScoresMenuAction action = ACTION_NONE_SCORES;
+    int max_index = score_count; /* score_count = index du bouton Retour */
+
+    touche = get_event();
+    switch (touche) {
+        case UP:
+            if (buttons_list->selected_button > 0) {
+                buttons_list->selected_button--;
+            }
+            break;
+        case DOWN:
+            if (buttons_list->selected_button < max_index) {
+                buttons_list->selected_button++;
+            }
+            break;
+        case ENTER:
+        case MOUSE_LEFT_CLICK:
+            if (buttons_list->selected_button == score_count) {
+                action = ACTION_SCORES_BACK;
+            } else if (buttons_list->selected_button < score_count) {
+                /* Retourne l'index du score a supprimer */
+                action = (ScoresMenuAction)buttons_list->selected_button;
+            }
+            break;
+        default:
+            break;
+    }
+
+    position_souris(buttons_list);
+
+    return action;
+}
+
+void process_scores_menu_actions(ButtonsList *buttons_list, MenuState *menu_state, ScoreBoard *score_board) {
+    ScoresMenuAction action = handle_scores_menu_navigation(buttons_list, score_board->count);
+    
+    if (action == ACTION_SCORES_BACK) {
+        *menu_state = MAIN_MENU;
+        buttons_list->selected_button = 0;
+    } else if (action >= 0 && action < score_board->count) {
+        /* Supprime le score a l'index donne */
+        remove_score(score_board, action);
+        save_scores(score_board);
+        /* Ajuste la selection si necessaire */
+        if (buttons_list->selected_button >= score_board->count && score_board->count > 0) {
+            buttons_list->selected_button = score_board->count - 1;
+        } else if (score_board->count == 0) {
+            buttons_list->selected_button = 0;
+        }
     }
 }
