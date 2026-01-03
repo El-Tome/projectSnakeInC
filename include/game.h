@@ -12,7 +12,10 @@
 #define MIN_SPEED 1
 
 /* Chemin vers la sprite sheet du serpent */
-#define SNAKE_SPRITE_PATH "ressources/snake/snake_sprite.png"
+#define SNAKE_SPRITE_SHEET "ressources/snake/snake_sprite.png"
+
+/* Délai entre frames d'animation (plus petit = plus rapide) */
+#define SNAKE_ANIM_DELAY 5
 
 
 typedef struct {

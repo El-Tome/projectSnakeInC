@@ -11,14 +11,14 @@ void init_game(Game *game, WindowSize *window_size) {
     /* placement de la nourriture */
     spawn_food(&game->grid, &game->food_list, 1, 1);
     
-    /* Initialisation des sprites du serpent */
-    if (!init_snake_sprites(&game->snake_sprites, SNAKE_SPRITE_PATH)) {
+    /* Initialisation des sprites du serpent depuis la sprite sheet */
+    if (!init_snake_sprites(&game->snake_sprites, SNAKE_SPRITE_SHEET)) {
         /* Si le chargement échoue, on continue sans sprites */
         game->snake_sprites.is_loaded = 0;
     }
     
     /* Initialisation de l'animation */
-    init_snake_animation(&game->snake_animation, FPS, game->settings.speed);
+    init_snake_animation(&game->snake_animation, SNAKE_ANIM_DELAY);
     
     draw_game(game, window_size);
 }
@@ -40,10 +40,10 @@ void draw_game(Game *game, WindowSize *window_size) {
     
     /* Dessiner le serpent avec les sprites ou en fallback */
     if (game->snake_sprites.is_loaded) {
-        draw_snake_animated(
-            &game->snake_sprites,
-            &game->snake,
-            &game->snake_animation,
+        draw_snake(
+            game->snake_sprites,
+            game->snake,
+            game->snake_animation,
             cell_size.width,
             grid_offset.x,
             grid_offset.y
@@ -57,4 +57,3 @@ void draw_game(Game *game, WindowSize *window_size) {
         );
     }
 }
-

@@ -14,9 +14,17 @@ typedef enum {
     DIR_NONE
 } Direction;
 
+/* Type de coin pour les segments du corps */
+typedef enum {
+    CORNER_NONE,        /* Pas de coin, segment droit */
+    CORNER_RIGHT,       /* Tourne à droite (sens horaire) */
+    CORNER_LEFT         /* Tourne à gauche (sens anti-horaire) */
+} CornerType;
+
 typedef struct {
     Position position;
     Direction direction;
+    CornerType corner;  /* Type de coin si c'est un segment de corps */
 } Segment;
 
 /* Serpent = tableau de positions (buffer circulaire) */

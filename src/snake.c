@@ -1,6 +1,36 @@
 #include "snake.h"
 #include <stdlib.h> /* Pour abs si besoin */
 
+/* 
+ * Calcule le type de coin entre deux directions
+ * prev_dir: direction du segment précédent (vers la queue)
+ * next_dir: direction du segment suivant (vers la tête)
+ */
+static CornerType get_corner_type(Direction prev_dir, Direction next_dir) {
+    /* Pas de coin si même direction */
+    if (prev_dir == next_dir || prev_dir == DIR_NONE || next_dir == DIR_NONE) {
+        return CORNER_NONE;
+    }
+    
+    /* Coin à droite (sens horaire) */
+    if ((prev_dir == DIR_UP && next_dir == DIR_RIGHT) ||
+        (prev_dir == DIR_RIGHT && next_dir == DIR_DOWN) ||
+        (prev_dir == DIR_DOWN && next_dir == DIR_LEFT) ||
+        (prev_dir == DIR_LEFT && next_dir == DIR_UP)) {
+        return CORNER_RIGHT;
+    }
+    
+    /* Coin à gauche (sens anti-horaire) */
+    if ((prev_dir == DIR_UP && next_dir == DIR_LEFT) ||
+        (prev_dir == DIR_LEFT && next_dir == DIR_DOWN) ||
+        (prev_dir == DIR_DOWN && next_dir == DIR_RIGHT) ||
+        (prev_dir == DIR_RIGHT && next_dir == DIR_UP)) {
+        return CORNER_LEFT;
+    }
+    
+    return CORNER_NONE;
+}
+
 /* Initialisation du serpent */
 void init_snake(Grid *grid, Snake *snake, int initial_length) {
     Position start_pos;
@@ -35,6 +65,7 @@ void init_snake(Grid *grid, Snake *snake, int initial_length) {
         snake->segments[i].position.x = start_pos.x - (initial_length - 1 - i);
         snake->segments[i].position.y = start_pos.y;
         snake->segments[i].direction = DIR_RIGHT; /* Direction par défaut */
+        snake->segments[i].corner = CORNER_NONE;  /* Pas de coin au départ */
         set_cell(grid, &snake->segments[i].position, CELL_SNAKE);
     }
 }
@@ -92,11 +123,21 @@ void set_snake_direction(Snake *snake, Direction new_dir) {
 
 /* Déplace le serpent */
 void move_snake(Grid *grid, Snake *snake) {
-    /* 1. Calculer la nouvelle position de la tête */
-    Segment current_head = snake->segments[snake->head_index];
-    Segment new_head     = current_head;
+    int old_head_idx, prev_idx;
+    Direction old_dir, new_dir;
+    Segment new_head;
+    
+    old_head_idx = snake->head_index;
+    old_dir = snake->segments[old_head_idx].direction;
+    new_dir = old_dir;
+    
+    /* Copier la position actuelle */
+    new_head.position = snake->segments[old_head_idx].position;
+    new_head.direction = new_dir;
+    new_head.corner = CORNER_NONE;
 
-    switch (snake->segments[snake->head_index].direction) {
+    /* Calculer la nouvelle position */
+    switch (new_dir) {
         case DIR_UP:
             new_head.position.y -= 1;
             if (new_head.position.y < 0) {
@@ -125,24 +166,41 @@ void move_snake(Grid *grid, Snake *snake) {
             break;
     }
 
-    /* 2. Avancer l'index de la tête (Circulaire) */
+    /* Calculer le coin de l'ancien segment de tête (il devient corps) */
+    prev_idx = (old_head_idx - 1 + MAX_SNAKE_LENGTH) % MAX_SNAKE_LENGTH;
+    snake->segments[old_head_idx].corner = get_corner_type(
+        snake->segments[prev_idx].direction,
+        old_dir
+    );
+
+    /* Avancer l'index de la tête (Circulaire) */
     snake->head_index = (snake->head_index + 1) % MAX_SNAKE_LENGTH;
 
-    /* 3. Écrire la nouvelle position */
+    /* Écrire la nouvelle position */
     snake->segments[snake->head_index] = new_head;
     set_cell(grid, &new_head.position, CELL_SNAKE);
 
-    /* 4. Avancer l'index de la queue (on supprime l'ancienne queue) */
+    /* Avancer l'index de la queue (on supprime l'ancienne queue) */
     set_cell(grid, &snake->segments[snake->tail_index].position, CELL_EMPTY);
     snake->tail_index = (snake->tail_index + 1) % MAX_SNAKE_LENGTH;
 }
 
 void grow_snake(Grid *grid, Snake *snake) {
-    /* 1. Calculer la nouvelle position de la tête */
-    Segment current_head = snake->segments[snake->head_index];
-    Segment new_head     = current_head;
+    int old_head_idx, prev_idx;
+    Direction old_dir, new_dir;
+    Segment new_head;
+    
+    old_head_idx = snake->head_index;
+    old_dir = snake->segments[old_head_idx].direction;
+    new_dir = old_dir;
+    
+    /* Copier la position actuelle */
+    new_head.position = snake->segments[old_head_idx].position;
+    new_head.direction = new_dir;
+    new_head.corner = CORNER_NONE;
 
-    switch (snake->segments[snake->head_index].direction) {
+    /* Calculer la nouvelle position */
+    switch (new_dir) {
         case DIR_UP:
             new_head.position.y -= 1;
             if (new_head.position.y < 0) {
@@ -171,14 +229,21 @@ void grow_snake(Grid *grid, Snake *snake) {
             break;
     }
 
-    /* 2. Avancer l'index de la tête (Circulaire) */
+    /* Calculer le coin de l'ancien segment de tête (il devient corps) */
+    prev_idx = (old_head_idx - 1 + MAX_SNAKE_LENGTH) % MAX_SNAKE_LENGTH;
+    snake->segments[old_head_idx].corner = get_corner_type(
+        snake->segments[prev_idx].direction,
+        old_dir
+    );
+
+    /* Avancer l'index de la tête (Circulaire) */
     snake->head_index = (snake->head_index + 1) % MAX_SNAKE_LENGTH;
 
-    /* 3. Écrire la nouvelle position */
+    /* Écrire la nouvelle position */
     snake->segments[snake->head_index] = new_head;
     set_cell(grid, &new_head.position, CELL_SNAKE);
 
-   snake->length++;
+    snake->length++;
 }
 
 
