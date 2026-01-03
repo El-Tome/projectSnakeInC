@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS  = -W -Wall -std=c89 -pedantic -O2 -Iinclude               # Flags imposé
-CFLAGS += $(shell pkg-config --cflags MLV)                        # Flags MLV
+CFLAGS  = -W -Wall -std=c89 -pedantic -O2 -Iinclude # Flags imposé
+CFLAGS += $(shell pkg-config --cflags MLV) # Flags MLV
 LDFLAGS = $(shell pkg-config --libs-only-other --libs-only-L MLV) # Flags MLV
-LDLIBS  = $(shell pkg-config --libs-only-l MLV)                   # Flags MLV
+LDLIBS  = $(shell pkg-config --libs-only-l MLV) # Flags MLV
 
 # Liste des fichiers sources et headers
 # SRC = src/main.c src/controls.c 
@@ -17,7 +17,9 @@ snake: $(OBJ)
 
 # Commande pour compiler les fichiers .c en .o
 build/%.o: src/%.c $(HEADERS)
-	$(CC) $(CFLAGS) -c $< -o $@   # le $< est le fichier source (.c) et le $@ est le fichier objet (.o)
+	$(CC) $(CFLAGS) -c $< -o $@   
+# le $< est le fichier source (.c) et le $@ est le fichier objet (.o)
+
 
 # Commande pour nettoyer les fichiers .o et l'exécutable
 clean:

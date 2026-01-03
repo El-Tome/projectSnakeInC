@@ -1,7 +1,7 @@
 #ifndef MENU_DISPLAY_H
 #define MENU_DISPLAY_H
 
-#define MAX_BUTTONS 10
+#define MAX_BUTTONS 20
 #define MAX_TEXT_LENGTH 100
 
 #include "main.h"
@@ -9,6 +9,7 @@
 #include <MLV/MLV_all.h>
 #include "game.h"
 #include "score.h"
+#include "save.h"
 
 
 typedef struct {
@@ -51,6 +52,23 @@ void display_scores_menu(
     WindowSize window_size,
     ButtonsList *buttons_list,
     ScoreBoard *score_board
+);
+
+void display_pause_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list
+);
+
+void display_load_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    SaveSlotList *save_slots
+);
+
+void display_save_menu(
+    WindowSize window_size,
+    ButtonsList *buttons_list,
+    SaveSlotList *save_slots
 );
 
 #endif

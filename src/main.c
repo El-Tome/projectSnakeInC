@@ -6,6 +6,7 @@
 #include "game.h"
 #include "snake.h"
 #include "score.h"
+#include "save.h"
 
 int main() {
     /* Déclaration des variables */
@@ -19,6 +20,7 @@ int main() {
     ToucheClavier touche;
     ScoreEntry score_entry;
     ScoreBoard score_board;
+    SaveSlotList save_slots;
 
     struct timespec debut, fin;
 
@@ -39,6 +41,7 @@ int main() {
 
     init_score_board(&score_board);
     load_scores(&score_board);
+    load_save_slot_list(&save_slots);
 
     srand(time(NULL));
 
@@ -72,7 +75,9 @@ int main() {
 
                 
             case LOAD_GAME_MENU:
-                /*load_game();*/
+                load_save_slot_list(&save_slots);
+                display_load_menu(window_size, &buttons_list, &save_slots);
+                process_load_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
                 break;
             case SCORES_MENU:
                 display_scores_menu(window_size, &buttons_list, &score_board);
@@ -91,6 +96,10 @@ int main() {
                             case LEFT:
                             case RIGHT:
                                 game.state = PLAYING;
+                                break;
+                            case ESCAPE:
+                                game.state = PAUSE_MENU;
+                                buttons_list.selected_button = 0;
                                 break;
                             default:
                                 break;
@@ -117,6 +126,10 @@ int main() {
                                 break;
                             case RIGHT:
                                 set_snake_direction(&game.snake, DIR_RIGHT);
+                                break;
+                            case ESCAPE:
+                                game.state = PAUSE_MENU;
+                                buttons_list.selected_button = 0;
                                 break;
                             default:
                                 set_snake_direction(&game.snake, DIR_NONE);
@@ -184,8 +197,12 @@ int main() {
                         process_game_over_menu_actions(&buttons_list, &game, &menu_state, &window_size);
                         break;
                     case PAUSE_MENU:
+                        display_pause_menu(window_size, &buttons_list);
+                        process_pause_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
                         break;
                     case SAVE_MENU:
+                        display_save_menu(window_size, &buttons_list, &save_slots);
+                        process_save_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
                         break;
                     default:
                         break;

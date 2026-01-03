@@ -6,6 +6,7 @@
 #include "controls.h"
 #include "game.h"
 #include "menu_display.h"
+#include "save.h"
 
 
 typedef enum {
@@ -42,6 +43,35 @@ typedef enum {
     ACTION_SCORES_DELETE  = 0  /* >= 0 = index du score a supprimer */
 } ScoresMenuAction;
 
+typedef enum {
+    ACTION_NONE_PAUSE   = -1,
+    ACTION_RESUME       = 0,
+    ACTION_SAVE_GAME    = 1,
+    ACTION_PAUSE_TO_MENU = 2
+} PauseMenuAction;
+
+typedef enum {
+    ACTION_NONE_LOAD     = -1,
+    ACTION_LOAD_BACK     = -2,
+    ACTION_LOAD_SLOT_0   = 0,
+    ACTION_LOAD_SLOT_1   = 1,
+    ACTION_LOAD_SLOT_2   = 2,
+    ACTION_LOAD_SLOT_3   = 3,
+    ACTION_DELETE_SLOT_0 = 10,
+    ACTION_DELETE_SLOT_1 = 11,
+    ACTION_DELETE_SLOT_2 = 12,
+    ACTION_DELETE_SLOT_3 = 13
+} LoadMenuAction;
+
+typedef enum {
+    ACTION_NONE_SAVE     = -1,
+    ACTION_SAVE_CANCEL   = -2,
+    ACTION_SAVE_SLOT_0   = 0,
+    ACTION_SAVE_SLOT_1   = 1,
+    ACTION_SAVE_SLOT_2   = 2,
+    ACTION_SAVE_SLOT_3   = 3
+} SaveMenuAction;
+
 void process_main_menu_actions(
     ButtonsList *buttons_list, 
     MenuState   *menu_state, 
@@ -66,6 +96,27 @@ void process_scores_menu_actions(
     ButtonsList *buttons_list,
     MenuState   *menu_state,
     ScoreBoard  *score_board
+);
+
+void process_pause_menu_actions(
+    ButtonsList   *buttons_list,
+    Game          *game,
+    MenuState     *menu_state,
+    SaveSlotList  *save_slots
+);
+
+void process_load_menu_actions(
+    ButtonsList   *buttons_list,
+    Game          *game,
+    MenuState     *menu_state,
+    SaveSlotList  *save_slots
+);
+
+void process_save_menu_actions(
+    ButtonsList   *buttons_list,
+    Game          *game,
+    MenuState     *menu_state,
+    SaveSlotList  *save_slots
 );
 
 #endif
