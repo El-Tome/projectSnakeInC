@@ -203,7 +203,7 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             buttons_list->selected_button = 0;
             break;
         case ACTION_START_GAME:
-            *menu_state = IN_GAME;
+            *menu_state = IN_GAME_CLASSIC;
             game->state = FREEZE_GAME_MENU;
             init_game(game, window_size);
             break;
@@ -440,7 +440,7 @@ void process_load_menu_actions(
         slot = action - ACTION_LOAD_SLOT_0;
         if (save_slots->slot_used[slot]) {
             if (load_game(game, slot) == FILE_UTILS_SUCCESS) {
-                *menu_state = IN_GAME;
+                *menu_state = IN_GAME_CLASSIC;
                 game->state = FREEZE_GAME_MENU;
             }
         }

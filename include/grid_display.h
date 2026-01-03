@@ -23,6 +23,6 @@ GridOffset get_grid_offset(Grid *grid, WindowSize window_size, CellSize cell_siz
 
 void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell);
 
-void draw_grid(Grid *grid, WindowSize window_size);
+void draw_grid(Grid *grid, WindowSize *window_size);
 
 #endif

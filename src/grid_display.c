@@ -69,15 +69,15 @@ void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell
     }
 }
 
-void draw_grid(Grid *grid, WindowSize window_size) {
+void draw_grid(Grid *grid, WindowSize *window_size) {
     int i, j;
     Position p;
     CellSize cell_size;
     GridOffset offset;
 
-    MLV_draw_filled_rectangle(0, 0, window_size.width, window_size.height, MLV_rgba(50, 50, 50, 255));
-    cell_size = get_cell_size(grid, window_size);
-    offset = get_grid_offset(grid, window_size, cell_size);
+    MLV_draw_filled_rectangle(0, 0, window_size->width, window_size->height, MLV_rgba(50, 50, 50, 255));
+    cell_size = get_cell_size(grid, *window_size);
+    offset = get_grid_offset(grid, *window_size, cell_size);
 
     for (i = 0; i < grid->width; i++) {
         for (j = 0; j < grid->height; j++) {
@@ -87,4 +87,3 @@ void draw_grid(Grid *grid, WindowSize window_size) {
         }
     }
 }
-

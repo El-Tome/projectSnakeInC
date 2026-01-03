@@ -32,7 +32,7 @@ void draw_game(Game *game, WindowSize *window_size) {
     GridOffset grid_offset;
     
     /* Dessiner la grille de base */
-    draw_grid(&game->grid, *window_size);
+    draw_grid(&game->grid, window_size);
     
     /* Calculer la taille des cellules et l'offset */
     cell_size = get_cell_size(&game->grid, *window_size);

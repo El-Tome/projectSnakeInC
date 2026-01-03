@@ -7,6 +7,25 @@
 #include "snake.h"
 #include "score.h"
 #include "save.h"
+#include "classic_mode.h"
+
+/* initialisation des variables */
+void init_game_defaults(Game *game) {
+    game->settings.width  = 20;
+    game->settings.height = 15;
+    game->settings.speed  = 15; 
+    game->settings.initial_length  = 3;
+    game->settings.is_two_players = 0;
+    game->settings.has_walls      = 0;
+    game->food_list.food_count    = 0;
+}
+
+/* initialisation de la fenetre */
+void init_window(WindowSize *window_size) {
+    MLV_get_desktop_size(&window_size->width, &window_size->height);
+    MLV_create_full_screen_window("Snake", "Snake", window_size->width, window_size->height);
+}
+
 
 int main() {
     /* Déclaration des variables */
@@ -17,8 +36,6 @@ int main() {
     int         quitter;
     long        elapsed_ns;
     int         nb_frames;
-    ToucheClavier touche;
-    ScoreEntry score_entry;
     ScoreBoard score_board;
     SaveSlotList save_slots;
 
@@ -31,13 +48,7 @@ int main() {
     buttons_list.nb_buttons = 0;
     buttons_list.selected_button = 0;
 
-    game.settings.width  = 20;
-    game.settings.height = 15;
-    game.settings.speed  = 15; 
-    game.settings.initial_length  = 3;
-    game.settings.is_two_players = 0;
-    game.settings.has_walls      = 0;
-    game.food_list.food_count    = 0;
+    init_game_defaults(&game);
 
     init_score_board(&score_board);
     load_scores(&score_board);
@@ -46,8 +57,7 @@ int main() {
     srand(time(NULL));
 
     /* Création de la fenetre MLV */
-    MLV_get_desktop_size(&window_size.width, &window_size.height);
-    MLV_create_full_screen_window("Snake", "Snake", window_size.width, window_size.height);    
+    init_window(&window_size);
 
     while (!quitter) {
         clock_gettime(CLOCK_REALTIME, &debut );
@@ -79,138 +89,24 @@ int main() {
                 display_load_menu(window_size, &buttons_list, &save_slots);
                 process_load_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
                 break;
+
+
             case SCORES_MENU:
                 display_scores_menu(window_size, &buttons_list, &score_board);
                 process_scores_menu_actions(&buttons_list, &menu_state, &score_board);
                 break;
-            case IN_GAME:
-                switch (game.state) {
-                    case FREEZE_GAME_MENU:
-                        draw_game(&game, &window_size);
-
-                        touche = convert_key_to_enum(get_key_pressed());
-
-                        switch (touche) {
-                            case UP:
-                            case DOWN:
-                            case LEFT:
-                            case RIGHT:
-                                game.state = PLAYING;
-                                break;
-                            case ESCAPE:
-                                game.state = PAUSE_MENU;
-                                buttons_list.selected_button = 0;
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-
-                    case PLAYING:
-                        nb_frames++;
-                        
-                        /* Mise à jour de l'animation à chaque frame */
-                        update_snake_animation(&game.snake_animation);
-
-                        touche = convert_key_to_enum(get_key_pressed());
-
-                        switch (touche) {
-                            case UP:
-                                set_snake_direction(&game.snake, DIR_UP);
-                                break;
-                            case DOWN:
-                                set_snake_direction(&game.snake, DIR_DOWN);
-                                break;
-                            case LEFT:
-                                set_snake_direction(&game.snake, DIR_LEFT);
-                                break;
-                            case RIGHT:
-                                set_snake_direction(&game.snake, DIR_RIGHT);
-                                break;
-                            case ESCAPE:
-                                game.state = PAUSE_MENU;
-                                buttons_list.selected_button = 0;
-                                break;
-                            default:
-                                set_snake_direction(&game.snake, DIR_NONE);
-                                break;
-                        }
-
-                        if (nb_frames % (31 - game.settings.speed) == 0) {
-                            /* Check le prochain déplacement */
-
-                            /* switch */
-                            /* si en mode mur il y a collision alors game over */
-                            /* il y a collision avec la nourriture alors grandir le serpent */
-                            /* il y a collision avec soi-même alors game over */
-                            /* Sinon déplacer le serpent */
-                            switch (get_next_cell_value(&game.grid, &game.snake)) {
-                                case CELL_EMPTY:
-                                    move_snake(&game.grid, &game.snake);
-                                    game.snake.has_next_direction = 0;
-                                    reset_snake_animation(&game.snake_animation);
-                                    break;
-                                case CELL_FOOD:
-                                    grow_snake(&game.grid, &game.snake);
-                                    game.snake.has_next_direction = 0;
-                                    reset_snake_animation(&game.snake_animation);
-                                    spawn_food(&game.grid, &game.food_list, 1, 1);
-                                    break;
-                                case CELL_WALL:
-                                    if (game.settings.has_walls) {
-                                        game.state = GAME_OVER_MENU;
-                                        buttons_list.selected_button = 0;
-
-                                        /* Calcul et sauvegarde du score */
-                                        game.score = (game.snake.length - game.settings.initial_length) * game.settings.speed;
-                                        score_entry = create_score_entry(game.score, &game.settings);
-                                        add_score(&score_board, &score_entry);
-                                        save_scores(&score_board);
-                                    } else {
-                                        move_snake(&game.grid, &game.snake);
-                                        game.snake.has_next_direction = 0;
-                                        reset_snake_animation(&game.snake_animation);
-                                    }
-                                    break;
-                                case CELL_SNAKE:
-                                    game.state = GAME_OVER_MENU;
-                                    buttons_list.selected_button = 0;
-
-                                    /* Calcul et sauvegarde du score */
-                                    game.score = (game.snake.length - game.settings.initial_length) * game.settings.speed;
-                                    score_entry = create_score_entry(game.score, &game.settings);
-                                    add_score(&score_board, &score_entry);
-                                    save_scores(&score_board);
-                                    break;
-                                default:
-                                    break;
-                            }
 
 
-                            nb_frames = 0;
-                        }
-                        draw_game(&game, &window_size);
-
-                        break;
-                    case GAME_OVER_MENU:
-                        display_game_over_menu(window_size, &buttons_list, &game);
-                        process_game_over_menu_actions(&buttons_list, &game, &menu_state, &window_size);
-                        break;
-                    case PAUSE_MENU:
-                        display_pause_menu(window_size, &buttons_list);
-                        process_pause_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
-                        break;
-                    case SAVE_MENU:
-                        display_save_menu(window_size, &buttons_list, &save_slots);
-                        process_save_menu_actions(&buttons_list, &game, &menu_state, &save_slots);
-                        break;
-                    default:
-                        break;
-                
-                }
-               
-
-
+            case IN_GAME_CLASSIC:
+                process_classic_mode(
+                    &game, 
+                    &window_size, 
+                    &buttons_list, 
+                    &nb_frames, 
+                    &menu_state, 
+                    &score_board, 
+                    &save_slots
+                );
                 break;
             default:
                 quitter = 1;
@@ -223,32 +119,9 @@ int main() {
         if (elapsed_ns < FRAME_TIME_NS && fin.tv_nsec > debut.tv_nsec) {
             MLV_wait_milliseconds((FRAME_TIME_NS - elapsed_ns) / NANOS_TO_MILLIS);
         }
-        /*
-            
-        //     // Affichage
-        //     // Récupération événement clavier (1 seul par image)
-        //     // Résolution événements
-        //     // Déplacement objets
-        //     // Résolution collisions
-            
-
-        */
     }
 
     free_game(&game);
     MLV_free_window ();
-
-
-/*
-    // detecte les evenements clavier / souris pour savoir sur quelle bouton on a cliqué
-
-    // si on a cliqué sur le bouton "nouveau jeu", on crée une nouvelle partie
-
-    // si on a cliqué sur le bouton "charger une partie", on charge la partie enregistrée
-
-    // si on a cliqué sur le bouton "quitter", on quitte le jeu
-
-    // si on a cliqué sur le bouton "scores", on affiche les scores
-*/
     exit(EXIT_SUCCESS);
 }
