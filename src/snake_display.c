@@ -9,8 +9,162 @@
 #define RIGHT_DIR "ressources/snake/right"
 #define LEFT_DIR "ressources/snake/left"
 
+/* Initialise une partie vide des sprites */
+void init_directional(DirectionalSprites *part) {
+    int i;
+    part->up.frame_count    = 0;
+    part->right.frame_count = 0;
+    part->down.frame_count  = 0;
+    part->left.frame_count  = 0;
+    for (i = 0; i < MAX_FRAMES; i++) {
+        part->up.frames[i]    = NULL;
+        part->right.frames[i] = NULL;
+        part->down.frames[i]  = NULL;
+        part->left.frames[i]  = NULL;
+    }
+}
+/* Initialise une partie vide des coins */
+void init_corner(CornerSprites *corner) {
+    init_directional(&corner->turn_right);
+    init_directional(&corner->turn_left);
+}
+void init_all_empty_sprites(SnakeSprites *sprites) {
+    init_directional(&sprites->head);
+    init_directional(&sprites->body_head);
+    init_directional(&sprites->body);
+    init_directional(&sprites->tail);
+    init_corner(&sprites->head_corner);
+    init_corner(&sprites->body_corner);
+    init_corner(&sprites->tail_corner);
+}
+
+/* Charge une image et crée les 4 rotations (base orientée vers le haut) */
+int load_rotations_up(DirectionalSprites *part, const char *path, int frame_idx) {
+    MLV_Image *base = NULL;
+
+    base = MLV_load_image(path);
+    if (base == NULL) {
+        return 0; /* Si l'image n'est pas chargée, on retourne 0 */
+    }
+    
+    /* Rotation de 0° */
+    part->up.frames[frame_idx]    = MLV_copy_image(base);
+    /* Rotation de 90° */
+    MLV_rotate_image(MLV_copy_image(base), 90.0);
+    part->left.frames[frame_idx]  = base;
+    /* Rotation de 180° */
+    MLV_rotate_image(MLV_copy_image(base), 180.0);
+    part->down.frames[frame_idx]  = base;
+    /* Rotation de 270° */
+    MLV_rotate_image(MLV_copy_image(base), 270.0);
+    part->right.frames[frame_idx] = base;
+    
+    /* Libération de l'image de base */
+    MLV_free_image(base);
+    return 1;
+}
+void set_frame_count(DirectionalSprites *part, int count) {
+    part->up.frame_count    = count;
+    part->right.frame_count = count;
+    part->down.frame_count  = count;
+    part->left.frame_count  = count;
+}
+void load_sprites(SnakeSprites *sprites, char *dir) {
+    int i, loaded;
+    char path[256];
+    
+    /* Têtes */
+    loaded = 0;
+    for (i = 0; i < 4; i++) {
+        sprintf(path, "%s/%d_Head.png", dir, i + 1);
+        if (load_rotations_up(&sprites->head, path, i)) {
+            loaded++;
+        }
+    }
+    set_frame_count(&sprites->head, loaded);
+    
+    /* Body_Head */
+    if (strcmp(dir, STRAIGHT_DIR) == 0) {
+        loaded = 0;
+        for (i = 0; i < 4; i++) {
+            sprintf(path, "%s/%d_Body_Head.png", dir, i + 5);
+            if (load_rotations_up(&sprites->body_head, path, i)) {
+                loaded++;
+            }
+        }
+        set_frame_count(&sprites->body_head, loaded);
+    }
+    /* Corps */
+    loaded = 0;
+    for (i = 0; i < 3; i++) {
+        sprintf(path, "%s/%d_Body.png", dir, i + 9);
+        if (load_rotations_up(&sprites->body, path, i)) {
+            loaded++;
+        }
+    }
+    set_frame_count(&sprites->body, loaded);
+    
+    /* Queue */
+    loaded = 0;
+    for (i = 0; i < 4; i++) {
+        sprintf(path, "%s/%d_Tail.png", dir, i + 13);
+        if (load_rotations_up(&sprites->tail, path, i)) {
+            loaded++;
+        }
+    }
+    set_frame_count(&sprites->tail, loaded);
+}
+
+/* Charge les sprites du serpent */
+int init_snake_sprites(SnakeSprites *sprites) {
+    
+    /* Initialiser toutes les structures des sprites à vide*/
+    init_all_empty_sprites(sprites);
+
+    /* Initialiser le statut des sprites à non chargés + la taille des sprites à la taille de base*/
+    sprites->is_loaded = 0;
+    sprites->current_size = SPRITE_SIZE;
+    
+
+    /* LIGNES DROITES */
+    load_sprites(sprites, STRAIGHT_DIR);
+    
+    /* COINS DROITE */
+    load_sprites(sprites, RIGHT_DIR);
+
+    /* COINS GAUCHE */
+    load_sprites(sprites, LEFT_DIR);
+    
+    /* Vérifie si au moins un sprite est chargé */
+    if (
+        /* Straight */
+        sprites->head.up.frame_count > 0      &&
+        sprites->body_head.up.frame_count > 0 &&
+        sprites->body.up.frame_count > 0      &&
+        sprites->tail.up.frame_count > 0      &&
+        /* Right */
+        sprites->head_corner.turn_right.up.frame_count > 0 &&
+        sprites->body_corner.turn_right.up.frame_count > 0 &&
+        sprites->tail_corner.turn_right.up.frame_count > 0 && 
+        /* Left */
+        sprites->head_corner.turn_left.up.frame_count > 0 &&
+        sprites->body_corner.turn_left.up.frame_count > 0 &&
+        sprites->tail_corner.turn_left.up.frame_count > 0
+    ) {
+        sprites->is_loaded = 1;
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
+
+
+
+
 /* Crée une copie pivotée d'une image */
-static MLV_Image* create_rotated(MLV_Image *original, double angle) {
+MLV_Image* create_rotated(MLV_Image *original, double angle) {
     MLV_Image *copy;
     
     copy = MLV_copy_image(original);
@@ -18,22 +172,6 @@ static MLV_Image* create_rotated(MLV_Image *original, double angle) {
         MLV_rotate_image(copy, angle);
     }
     return copy;
-}
-
-/* Charge une image et crée les 4 rotations (base orientée vers le haut) */
-static int load_rotations_up(DirectionalSprites *part, const char *path, int frame_idx) {
-    MLV_Image *base = MLV_load_image(path);
-    if (base == NULL) {
-        return 0;
-    }
-    
-    part->up.frames[frame_idx] = MLV_copy_image(base);
-    part->right.frames[frame_idx] = create_rotated(base, 270.0);
-    part->down.frames[frame_idx] = create_rotated(base, 180.0);
-    part->left.frames[frame_idx] = create_rotated(base, 90.0);
-    
-    MLV_free_image(base);
-    return 1;
 }
 
 /* Charge une image sans rotation (pour les coins qui seront orientés manuellement) */
@@ -46,32 +184,7 @@ static int load_single_frame(AnimatedSprite *sprite, const char *path, int frame
     return 1;
 }
 
-/* Initialise une partie vide */
-static void init_directional(DirectionalSprites *part) {
-    int i;
-    part->up.frame_count = 0;
-    part->right.frame_count = 0;
-    part->down.frame_count = 0;
-    part->left.frame_count = 0;
-    for (i = 0; i < MAX_FRAMES; i++) {
-        part->up.frames[i] = NULL;
-        part->right.frames[i] = NULL;
-        part->down.frames[i] = NULL;
-        part->left.frames[i] = NULL;
-    }
-}
 
-static void init_corner(CornerSprites *corner) {
-    init_directional(&corner->turn_right);
-    init_directional(&corner->turn_left);
-}
-
-static void set_frame_count(DirectionalSprites *part, int count) {
-    part->up.frame_count = count;
-    part->right.frame_count = count;
-    part->down.frame_count = count;
-    part->left.frame_count = count;
-}
 
 /* Libère une AnimatedSprite */
 static void free_animated(AnimatedSprite *sprite) {
@@ -140,129 +253,7 @@ static void create_corner_rotations(DirectionalSprites *part, int frame_idx) {
     part->left.frames[frame_idx] = create_rotated(base, 90.0);
 }
 
-/* Charge les sprites du serpent */
-int init_snake_sprites(SnakeSprites *sprites, const char *unused) {
-    char path[256];
-    int i, loaded;
-    int head_indices[4] = {0, 1, 2, 4};
-    
-    (void)unused;
-    
-    /* Initialiser toutes les structures */
-    init_directional(&sprites->head);
-    init_directional(&sprites->body_head);
-    init_directional(&sprites->body);
-    init_directional(&sprites->tail);
-    init_corner(&sprites->head_corner);
-    init_corner(&sprites->body_corner);
-    init_corner(&sprites->tail_corner);
-    sprites->is_loaded = 0;
-    sprites->current_size = SPRITE_SIZE;
-    
-    /* === LIGNES DROITES (dossier straight/) === */
-    
-    /* Têtes : 0, 1, 2, 4_Head.png */
-    loaded = 0;
-    for (i = 0; i < 4; i++) {
-        sprintf(path, "%s/%d_Head.png", STRAIGHT_DIR, head_indices[i]);
-        if (load_rotations_up(&sprites->head, path, i)) {
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->head, loaded);
-    
-    /* Body_Head : 5-8_Body_Head.png */
-    loaded = 0;
-    for (i = 0; i < 4; i++) {
-        sprintf(path, "%s/%d_Body_Head.png", STRAIGHT_DIR, i + 5);
-        if (load_rotations_up(&sprites->body_head, path, i)) {
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->body_head, loaded);
-    
-    /* Corps : 9-11_Body.png */
-    loaded = 0;
-    for (i = 0; i < 3; i++) {
-        sprintf(path, "%s/%d_Body.png", STRAIGHT_DIR, i + 9);
-        if (load_rotations_up(&sprites->body, path, i)) {
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->body, loaded);
-    
-    /* Queue : 12-15_Tail.png */
-    loaded = 0;
-    for (i = 0; i < 4; i++) {
-        sprintf(path, "%s/%d_Tail.png", STRAIGHT_DIR, i + 12);
-        if (load_rotations_up(&sprites->tail, path, i)) {
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->tail, loaded);
-    
-    /* === COINS DROITE (dossier right/) === */
-    
-    /* Tête qui tourne à droite : 0-3_Right_head.png */
-    loaded = 0;
-    for (i = 0; i < 4; i++) {
-        sprintf(path, "%s/%d_Right_head.png", RIGHT_DIR, i);
-        if (load_single_frame(&sprites->head_corner.turn_right.up, path, i)) {
-            create_corner_rotations(&sprites->head_corner.turn_right, i);
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->head_corner.turn_right, loaded);
-    
-    /* Corps qui tourne à droite : 4-6_Right_body.png */
-    loaded = 0;
-    for (i = 0; i < 3; i++) {
-        sprintf(path, "%s/%d_Right_body.png", RIGHT_DIR, i + 4);
-        if (load_single_frame(&sprites->body_corner.turn_right.up, path, i)) {
-            create_corner_rotations(&sprites->body_corner.turn_right, i);
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->body_corner.turn_right, loaded);
-    
-    /* Queue qui tourne à droite : 7-9_Right_tail.png */
-    loaded = 0;
-    for (i = 0; i < 3; i++) {
-        sprintf(path, "%s/%d_Right_tail.png", RIGHT_DIR, i + 7);
-        if (load_single_frame(&sprites->tail_corner.turn_right.up, path, i)) {
-            create_corner_rotations(&sprites->tail_corner.turn_right, i);
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->tail_corner.turn_right, loaded);
-    
-    /* === COINS GAUCHE (dossier left/) === */
-    
-    /* Tête qui tourne à gauche : 0-3_Left_head.png */
-    loaded = 0;
-    for (i = 0; i < 4; i++) {
-        sprintf(path, "%s/%d_Left_head.png", LEFT_DIR, i);
-        if (load_single_frame(&sprites->head_corner.turn_left.up, path, i)) {
-            create_corner_rotations(&sprites->head_corner.turn_left, i);
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->head_corner.turn_left, loaded);
-    
-    /* Corps qui tourne à gauche : 4-9_Left_body.png */
-    loaded = 0;
-    for (i = 0; i < 6; i++) {
-        sprintf(path, "%s/%d_Left_body.png", LEFT_DIR, i + 4);
-        if (load_single_frame(&sprites->body_corner.turn_left.up, path, i)) {
-            create_corner_rotations(&sprites->body_corner.turn_left, i);
-            loaded++;
-        }
-    }
-    set_frame_count(&sprites->body_corner.turn_left, loaded);
-    
-    sprites->is_loaded = 1;
-    return 1;
-}
+
 
 void free_snake_sprites(SnakeSprites *sprites) {
     free_directional(&sprites->head);

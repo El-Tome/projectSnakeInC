@@ -11,14 +11,20 @@ void init_game(Game *game, WindowSize *window_size) {
     /* placement de la nourriture */
     spawn_food(&game->grid, &game->food_list, 1, 1);
     
-    /* Initialisation des sprites du serpent depuis la sprite sheet */
-    if (!init_snake_sprites(&game->snake_sprites, SNAKE_SPRITE_SHEET)) {
-        /* Si le chargement échoue, on continue sans sprites */
-        game->snake_sprites.is_loaded = 0;
+    /* Initialisation des sprites du serpent sinon mode case verte */
+    if (init_snake_sprites(&game->snake_sprites)) {
+
+
+
+
+
+
+        
+        /* Initialisation de l'animation */
+        init_snake_animation(&game->snake_animation, SNAKE_ANIM_DELAY);
     }
     
-    /* Initialisation de l'animation */
-    init_snake_animation(&game->snake_animation, SNAKE_ANIM_DELAY);
+   
     
     draw_game(game, window_size);
 }

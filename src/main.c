@@ -26,6 +26,12 @@ void init_window(WindowSize *window_size) {
     MLV_create_full_screen_window("Snake", "Snake", window_size->width, window_size->height);
 }
 
+void init_score_board_and_save_slots(ScoreBoard *score_board, SaveSlotList *save_slots) {
+    init_score_board(score_board);
+    load_scores(score_board);
+    load_save_slot_list(save_slots);
+}
+
 
 int main() {
     /* Déclaration des variables */
@@ -41,6 +47,8 @@ int main() {
 
     struct timespec debut, fin;
 
+    srand(time(NULL));
+
     /* Initialisation des variables */
     menu_state = MAIN_MENU;
     quitter    = 0;
@@ -49,15 +57,10 @@ int main() {
     buttons_list.selected_button = 0;
 
     init_game_defaults(&game);
-
-    init_score_board(&score_board);
-    load_scores(&score_board);
-    load_save_slot_list(&save_slots);
-
-    srand(time(NULL));
-
-    /* Création de la fenetre MLV */
+    init_score_board_and_save_slots(&score_board, &save_slots);
     init_window(&window_size);
+
+    
 
     while (!quitter) {
         clock_gettime(CLOCK_REALTIME, &debut );

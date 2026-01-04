@@ -48,7 +48,7 @@ void process_classic_mode(
 void freeze_game_menu(Game *game, WindowSize *window_size, ButtonsList *buttons_list) {
     ToucheClavier touche;
 
-    draw_grid(&game->grid, window_size);
+    draw_game(game, window_size);
     MLV_draw_text(window_size->width / 2, window_size->height / 2, "Appuyez sur une touche pour commencer", MLV_COLOR_WHITE);
 
     touche = convert_key_to_enum(get_key_pressed());
@@ -103,17 +103,22 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
 
     process_playing_key(game, buttons_list);
 
+    /* Mise à jour de l'animation à chaque frame */
+    update_snake_animation(&game->snake_animation);
+
     /* FPS+1 car on veux se déplacer au maximun 1 fois par frame */
     if (*nb_frames % (FPS+1 - game->settings.speed) == 0) {
         switch (get_next_cell_value(&game->grid, &game->snake)) {
             case CELL_EMPTY:
                 move_snake(&game->grid, &game->snake);
                 game->snake.has_next_direction = 0;
+                reset_snake_animation(&game->snake_animation);
                 break;
 
             case CELL_FOOD:
                 grow_snake(&game->grid, &game->snake);
                 game->snake.has_next_direction = 0;
+                reset_snake_animation(&game->snake_animation);
                 spawn_food(&game->grid, &game->food_list, 1, 1);
                 break;
 
@@ -130,6 +135,7 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                 } else {
                     move_snake(&game->grid, &game->snake);
                     game->snake.has_next_direction = 0;
+                    reset_snake_animation(&game->snake_animation);
                 }
                 break;
             case CELL_SNAKE:
@@ -149,5 +155,5 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
 
         *nb_frames = 0;
     }
-    draw_grid(&game->grid, window_size);
+    draw_game(game, window_size);
 }

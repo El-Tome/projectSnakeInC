@@ -10,11 +10,12 @@
 #define SPRITE_SIZE 32
 
 /* Nombre max de frames d'animation */
-#define MAX_FRAMES 6
+#define MAX_FRAMES 4
 
 /* Type de partie du serpent */
 typedef enum {
     SNAKE_PART_HEAD,
+    SNAKE_PART_BODY_HEAD,
     SNAKE_PART_BODY,
     SNAKE_PART_TAIL
 } SnakePartType;
@@ -64,7 +65,7 @@ typedef struct {
 } SnakeAnimation;
 
 /* Initialise les sprites */
-int init_snake_sprites(SnakeSprites *sprites, const char *unused);
+int init_snake_sprites(SnakeSprites *sprites);
 
 /* Libère les sprites */
 void free_snake_sprites(SnakeSprites *sprites);
