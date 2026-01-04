@@ -1,6 +1,9 @@
 #include "game.h"
+#include "main.h"
 
 void init_game(Game *game, WindowSize *window_size) {
+    int frame_delay;
+
     game->state = FREEZE_GAME_MENU;
     game->grid  = init_grid(game->settings.width, game->settings.height, game->settings.has_walls);
 
@@ -13,18 +16,14 @@ void init_game(Game *game, WindowSize *window_size) {
     
     /* Initialisation des sprites du serpent sinon mode case verte */
     if (init_snake_sprites(&game->snake_sprites)) {
-
-
-
-
-
-
-        
         /* Initialisation de l'animation */
-        init_snake_animation(&game->snake_animation, SNAKE_ANIM_DELAY);
+        frame_delay = (FPS+1 - game->settings.speed)/MAX_FRAMES;
+        /* Si le délai est inférieur à 1, on le met à 1 */
+        if (frame_delay < 1) {
+            frame_delay = 1;
+        }
+        init_snake_animation(&game->snake_animation, frame_delay);
     }
-    
-   
     
     draw_game(game, window_size);
 }
@@ -34,14 +33,14 @@ void free_game(Game *game) {
 }
 
 void draw_game(Game *game, WindowSize *window_size) {
-    CellSize cell_size;
+    CellSize   cell_size;
     GridOffset grid_offset;
     
     /* Dessiner la grille de base */
     draw_grid(&game->grid, window_size);
     
     /* Calculer la taille des cellules et l'offset */
-    cell_size = get_cell_size(&game->grid, *window_size);
+    cell_size   = get_cell_size(&game->grid, *window_size);
     grid_offset = get_grid_offset(&game->grid, *window_size, cell_size);
     
     /* Dessiner le serpent avec les sprites ou en fallback */

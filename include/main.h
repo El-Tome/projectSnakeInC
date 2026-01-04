@@ -1,7 +1,7 @@
 #ifndef SNAKE_MAIN_H
 #define SNAKE_MAIN_H
 
-#define FPS 30
+#define FPS 60
 #define FRAME_TIME_NS (1000000000 / FPS)
 #define NANOS_TO_MILLIS 1000000
 
