@@ -20,7 +20,7 @@ void process_classic_mode(
             break;
 
         case PLAYING:
-            nb_frames++;
+            (*nb_frames)++;
             playing(game, window_size, buttons_list, nb_frames, score_board);
             break;
 
@@ -147,7 +147,7 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
         }
 
 
-        nb_frames = 0;
+        *nb_frames = 0;
     }
     draw_grid(&game->grid, window_size);
 }

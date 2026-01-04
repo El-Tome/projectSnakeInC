@@ -52,6 +52,8 @@ void init_snake(Grid *grid, Snake *snake, int initial_length) {
     }
 
     snake->length = initial_length;
+    snake->buffer = DIR_NONE;
+    snake->has_next_direction = 0;
 
 
     /*
@@ -111,10 +113,17 @@ void set_snake_direction(Snake *snake, Direction new_dir) {
         is_valid_direction_change(snake->segments[snake->head_index].direction, snake->buffer)
     ) {
         snake->segments[snake->head_index].direction = snake->buffer;
+        snake->has_next_direction = 1;
         snake->buffer = DIR_NONE;
     } else if (
         snake->has_next_direction == 1 &&
         snake->buffer == DIR_NONE &&
+        is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir)
+    ) {
+        snake->buffer = new_dir;
+    } else if (
+        snake->has_next_direction == 1 &&
+        snake->buffer != DIR_NONE &&
         is_valid_direction_change(snake->segments[snake->head_index].direction, new_dir)
     ) {
         snake->buffer = new_dir;
@@ -176,13 +185,13 @@ void move_snake(Grid *grid, Snake *snake) {
     /* Avancer l'index de la tête (Circulaire) */
     snake->head_index = (snake->head_index + 1) % MAX_SNAKE_LENGTH;
 
-    /* Écrire la nouvelle position */
-    snake->segments[snake->head_index] = new_head;
-    set_cell(grid, &new_head.position, CELL_SNAKE);
-
-    /* Avancer l'index de la queue (on supprime l'ancienne queue) */
+    /* D'abord on efface l'ancienne queue pour éviter d'effacer la tête si elle arrive au même endroit */
     set_cell(grid, &snake->segments[snake->tail_index].position, CELL_EMPTY);
     snake->tail_index = (snake->tail_index + 1) % MAX_SNAKE_LENGTH;
+
+    /* Ensuite on affiche la nouvelle tête */
+    snake->segments[snake->head_index] = new_head;
+    set_cell(grid, &new_head.position, CELL_SNAKE);
 }
 
 void grow_snake(Grid *grid, Snake *snake) {
@@ -272,6 +281,12 @@ CellType get_next_cell_value(Grid *grid, Snake *snake) {
 
     if (next_position.x < 0 || next_position.x >= grid->width || next_position.y < 0 || next_position.y >= grid->height) {
         return CELL_WALL;
+    }
+
+    /* Si la prochaine case est la queue, ce n'est pas une collision car elle va bouger */
+    if (next_position.x == snake->segments[snake->tail_index].position.x && 
+        next_position.y == snake->segments[snake->tail_index].position.y) {
+        return CELL_EMPTY;
     }
 
     return get_cell(grid, &next_position);
