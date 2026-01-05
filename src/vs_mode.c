@@ -95,16 +95,20 @@ void playing_vs(Game *game, WindowSize *window_size, ButtonsList *buttons_list, 
         next_cell_p2 = get_next_cell_value(&game->grid, &game->snake2);
 
         /* Déterminer si un joueur meurt */
-        /* Joueur 1 : collision avec mur/pierre ou serpent */
-        if (next_cell_p1 == CELL_WALL && (game->settings.has_walls || game->settings.spawn_obstacle_on_eat)) {
-            p1_dies = 1;
+        /* Joueur 1 : collision avec mur, pierre ou serpent */
+        if (next_cell_p1 == CELL_WALL && game->settings.has_walls) {
+            p1_dies = 1;  /* Mur de bordure (si activé) */
+        } else if (next_cell_p1 == CELL_OBSTACLE) {
+            p1_dies = 1;  /* Pierre (toujours mortel) */
         } else if (next_cell_p1 == CELL_SNAKE) {
             p1_dies = 1;
         }
 
-        /* Joueur 2 : collision avec mur/pierre ou serpent */
-        if (next_cell_p2 == CELL_WALL && (game->settings.has_walls || game->settings.spawn_obstacle_on_eat)) {
-            p2_dies = 1;
+        /* Joueur 2 : collision avec mur, pierre ou serpent */
+        if (next_cell_p2 == CELL_WALL && game->settings.has_walls) {
+            p2_dies = 1;  /* Mur de bordure (si activé) */
+        } else if (next_cell_p2 == CELL_OBSTACLE) {
+            p2_dies = 1;  /* Pierre (toujours mortel) */
         } else if (next_cell_p2 == CELL_SNAKE) {
             p2_dies = 1;
         }

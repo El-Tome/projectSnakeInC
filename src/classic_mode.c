@@ -138,8 +138,8 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                 break;
 
             case CELL_WALL:
-                /* Le serpent meurt si les murs OU les pierres sont activés */
-                if (game->settings.has_walls || game->settings.spawn_obstacle_on_eat) {
+                /* Murs de bordure : le serpent meurt si has_walls est activé */
+                if (game->settings.has_walls) {
                     game->state = GAME_OVER_MENU;
                     buttons_list->selected_button = 0;
 
@@ -149,11 +149,25 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                     add_score(score_board, &score_entry);
                     save_scores(score_board);
                 } else {
+                    /* Murs désactivés : le serpent traverse */
                     move_snake(&game->grid, &game->snake);
                     reset_snake_animation(&game->snake_animation);
                     game->snake.has_next_direction = 0;
                 }
                 break;
+
+            case CELL_OBSTACLE:
+                /* Pierres : le serpent meurt toujours */
+                game->state = GAME_OVER_MENU;
+                buttons_list->selected_button = 0;
+
+                /* Calcul et sauvegarde du score avec multiplicateurs */
+                game->score = calculate_score(game);
+                score_entry = create_score_entry(game->score, &game->settings);
+                add_score(score_board, &score_entry);
+                save_scores(score_board);
+                break;
+
             case CELL_SNAKE:
                 game->state = GAME_OVER_MENU;
                 buttons_list->selected_button = 0;

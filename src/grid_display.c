@@ -64,6 +64,10 @@ void draw_cell(AllAssetsDisplay *assets, CellSize cell_size, GridOffset offset, 
             wall_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
             break;
 
+        case CELL_OBSTACLE:
+            obstacle_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
+            break;
+
         case CELL_BONUS:
             bonus_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
             break;

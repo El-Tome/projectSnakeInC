@@ -14,7 +14,8 @@ typedef enum {
     CELL_EMPTY,
     CELL_SNAKE,
     CELL_FOOD,
-    CELL_WALL,
+    CELL_WALL,      /* Murs de bordure */
+    CELL_OBSTACLE,  /* Pierres (obstacles dynamiques) */
     CELL_BONUS,
     CELLE_SHADOW,
     CELL_PATES

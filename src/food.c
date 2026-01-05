@@ -97,8 +97,8 @@ void spawn_obstacle(Grid *grid, int nb_to_spawn) {
         /* On récupère la cellule vide */
         p = empty_cells[random_index];
 
-        /* On marque la cellule comme obstacle (pierre/mur) */
-        set_cell(grid, &p, CELL_WALL);
+        /* On marque la cellule comme obstacle (pierre) */
+        set_cell(grid, &p, CELL_OBSTACLE);
 
         /* On retire la cellule de la liste des cellules vides */
         empty_cells_count--;
