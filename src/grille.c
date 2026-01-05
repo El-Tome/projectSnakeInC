@@ -13,9 +13,9 @@ void set_cell(Grid *grid, Position p, CellType type)   - Écriture cellule
 
 void clear_grid(Grid *grid) {
     int i, j;
-    for (i=0; i<grid->width; i++) {
-        for (j=0; j<grid->height; j++) {
-            grid->cells[i][j] = CELL_EMPTY;
+    for (j=0; j<grid->height; j++) {
+        for (i=0; i<grid->width; i++) {
+            grid->cells[j][i] = CELL_EMPTY;  /* cells[y][x] */
         }
     }
 }
@@ -37,10 +37,9 @@ Grid init_grid(int width, int height, int has_borders) {
 }
 
 CellType get_cell(Grid *grid, Position *p) {
-    return grid->cells[p->x][p->y];
-            
+    return grid->cells[p->y][p->x];  /* cells[y][x] */
 }
 
 void set_cell(Grid *grid, Position *p, CellType type){
-    grid->cells[p->x][p->y] = type;
+    grid->cells[p->y][p->x] = type;  /* cells[y][x] */
 }
