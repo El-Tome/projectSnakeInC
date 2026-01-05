@@ -287,13 +287,10 @@ void draw_segment(
             break;
             
         case SNAKE_PART_TAIL:
-            /* La queue tourne si sa direction diffère du segment suivant */
-            corner = calc_corner(seg.direction, next_dir);
-
-            if (corner == CORNER_RIGHT) {
-                anim_sprite = get_corner_sprite(sprites.tail_corner.turn_right, seg.direction);
-            } else if (corner == CORNER_LEFT) {
-                anim_sprite = get_corner_sprite(sprites.tail_corner.turn_left, seg.direction);
+            if (seg.corner == CORNER_RIGHT) {
+                anim_sprite = get_corner_sprite(sprites.tail_corner.turn_right, prev_dir);
+            } else if (seg.corner == CORNER_LEFT) {
+                anim_sprite = get_corner_sprite(sprites.tail_corner.turn_left, prev_dir);
             } else {
                 anim_sprite = get_sprite_dir(sprites.tail, seg.direction);
             }
