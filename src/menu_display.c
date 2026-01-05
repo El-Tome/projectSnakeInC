@@ -229,8 +229,6 @@ void display_game_over_menu(
     char score_text[50];
     int  text_width, text_height;
 
-    game->score = (game->snake.length - game->settings.initial_length) * game->settings.speed;
-
     /* Affichage du titre "GAME OVER" */
     MLV_get_size_of_text("GAME OVER", &text_width, &text_height);
     MLV_draw_text(

@@ -1,6 +1,7 @@
 #include "classic_mode.h"
 #include "controls.h"
 #include "menu_display.h"
+#include <math.h>
 
 void freeze_game_menu(Game *game, WindowSize *window_size, ButtonsList *buttons_list);
 void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int *nb_frames, ScoreBoard *score_board);
@@ -95,6 +96,22 @@ void process_playing_key(Game *game, ButtonsList *buttons_list) {
     }
 }
 
+/* Calcule le score avec les multiplicateurs */
+int calculate_score(Game *game) {
+    double score = (double)(game->snake.length - game->settings.initial_length) * game->settings.speed;
+    
+    /* Multiplicateur x1.5 si les murs sont activés */
+    if (game->settings.has_walls) {
+        score = score * 1.5;
+    }
+    /* Multiplicateur x2 si les pierres sont activées */
+    if (game->settings.spawn_obstacle_on_eat) {
+        score = score * 2;
+    }
+    
+    return trunc(score);
+}
+
 void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int *nb_frames, ScoreBoard *score_board) {
     ScoreEntry    score_entry;
 
@@ -121,12 +138,13 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                 break;
 
             case CELL_WALL:
-                if (game->settings.has_walls) {
+                /* Le serpent meurt si les murs OU les pierres sont activés */
+                if (game->settings.has_walls || game->settings.spawn_obstacle_on_eat) {
                     game->state = GAME_OVER_MENU;
                     buttons_list->selected_button = 0;
 
-                    /* Calcul et sauvegarde du score */
-                    game->score = (game->snake.length - game->settings.initial_length) * game->settings.speed;
+                    /* Calcul et sauvegarde du score avec multiplicateurs */
+                    game->score = calculate_score(game);
                     score_entry = create_score_entry(game->score, &game->settings);
                     add_score(score_board, &score_entry);
                     save_scores(score_board);
@@ -140,8 +158,8 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                 game->state = GAME_OVER_MENU;
                 buttons_list->selected_button = 0;
 
-                /* Calcul et sauvegarde du score */
-                game->score = (game->snake.length - game->settings.initial_length) * game->settings.speed;
+                /* Calcul et sauvegarde du score avec multiplicateurs */
+                game->score = calculate_score(game);
                 score_entry = create_score_entry(game->score, &game->settings);
                 add_score(score_board, &score_entry);
                 save_scores(score_board);
