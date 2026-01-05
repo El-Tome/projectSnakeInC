@@ -1,6 +1,7 @@
 #include "game.h"
 #include "main.h"
 #include "snake_display.h"
+#include "apple_display.h" 
 #include <math.h>
 
 void init_game(Game *game, WindowSize *window_size) {
@@ -15,6 +16,9 @@ void init_game(Game *game, WindowSize *window_size) {
 
     /* placement de la nourriture */
     spawn_food(&game->grid, &game->food_list, 1, 1);
+    
+        /* Initialisation affichage pomme*/
+    apple_display_init();
     
     /* Initialisation des sprites du serpent sinon mode case verte */
     if (init_snake_sprites(&game->snake_sprites)) {

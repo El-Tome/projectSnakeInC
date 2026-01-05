@@ -1,5 +1,6 @@
 #include "grid_display.h"
 #include "snake_display.h"
+#include "apple_display.h"  
 #include "MLV/MLV_color.h"
 
 CellSize get_cell_size(Grid *grid, WindowSize window_size) {
@@ -57,7 +58,12 @@ void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell
             break;
         
         case CELL_FOOD:
-            MLV_draw_filled_rectangle(x + 2, y + 2, cell_size.width - 4, cell_size.height - 4, MLV_rgba(255, 0, 0, 255));
+            apple_display_draw(
+                *p,
+                cell_size.width,
+                offset.x,
+                offset.y
+          );
             break;
         
         case CELL_WALL:
