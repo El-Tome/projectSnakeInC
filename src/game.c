@@ -1,8 +1,10 @@
 #include "game.h"
 #include "main.h"
+#include "snake_display.h"
+#include <math.h>
 
 void init_game(Game *game, WindowSize *window_size) {
-    int frame_delay;
+    int frame_delay, move_duration, frames_to_play;
 
     game->state = FREEZE_GAME_MENU;
     game->grid  = init_grid(game->settings.width, game->settings.height, game->settings.has_walls);
@@ -16,13 +18,23 @@ void init_game(Game *game, WindowSize *window_size) {
     
     /* Initialisation des sprites du serpent sinon mode case verte */
     if (init_snake_sprites(&game->snake_sprites)) {
-        /* Initialisation de l'animation */
-        frame_delay = (FPS+1 - game->settings.speed)/MAX_FRAMES;
-        /* Si le délai est inférieur à 1, on le met à 1 */
-        if (frame_delay < 1) {
+        move_duration = FPS - game->settings.speed;
+        
+        /* Décider du nombre de frames selon la durée disponible */
+        if (move_duration < MAX_FRAMES) {
+            /* Pas assez de temps pour toutes les frames */
+            frames_to_play = move_duration;
+            if (frames_to_play < 1) {
+                frames_to_play = 1;
+            }
             frame_delay = 1;
+        } else {
+            /* On joue toutes les frames */
+            frames_to_play = MAX_FRAMES;
+            frame_delay = ceil((double)move_duration / frames_to_play);
         }
-        init_snake_animation(&game->snake_animation, frame_delay);
+        
+        init_snake_animation(&game->snake_animation, frame_delay, frames_to_play);
     }
     
     draw_game(game, window_size);
@@ -45,6 +57,7 @@ void draw_game(Game *game, WindowSize *window_size) {
     
     /* Dessiner le serpent avec les sprites ou en fallback */
     if (game->snake_sprites.is_loaded) {
+        /* Dessiner le serpent avec les sprites ou en fallback */
         draw_snake(
             game->snake_sprites,
             game->snake,

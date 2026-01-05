@@ -62,6 +62,7 @@ typedef struct {
     int current_frame;
     int frame_delay;
     int tick_counter;
+    int frame_to_play;
 } SnakeAnimation;
 
 /* Initialise les sprites */
@@ -74,7 +75,7 @@ void free_snake_sprites(SnakeSprites *sprites);
 void resize_snake_sprites(SnakeSprites *sprites, int cell_size);
 
 /* Initialise l'animation */
-void init_snake_animation(SnakeAnimation *anim, int frame_delay);
+void init_snake_animation(SnakeAnimation *anim, int frame_delay, int frame_count);
 
 /* Met à jour l'animation */
 void update_snake_animation(SnakeAnimation *anim);

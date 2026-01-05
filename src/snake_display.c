@@ -9,6 +9,12 @@
 #define RIGHT_DIR "ressources/snake/right"
 #define LEFT_DIR "ressources/snake/left"
 
+void init_snake_animation(SnakeAnimation *anim, int frame_delay, int frame_count) {
+    anim->current_frame = 0;
+    anim->frame_delay = frame_delay;
+    anim->tick_counter = 0;
+    anim->frame_to_play = frame_count;
+}
 
 /* Crée une copie pivotée d'une image */
 MLV_Image* create_rotated(MLV_Image *original, double angle) {
@@ -376,15 +382,29 @@ void draw_snake_fallback(Snake *snake, CellSize cell_size, GridOffset offset) {
     }
 }
 
+void update_snake_animation(SnakeAnimation *anim) {
+    anim->tick_counter++;
+
+    if (anim->tick_counter >= anim->frame_delay && anim->current_frame < anim->frame_to_play) {
+        anim->tick_counter = 0;
+
+        if (anim->frame_to_play == 2) {
+            anim->current_frame += 2;
+        } else {
+            anim->current_frame++;
+        }
+    }
+}
+
+void reset_snake_animation(SnakeAnimation *anim) {
+    anim->current_frame = 0;
+    anim->tick_counter = 0;
+}
 
 
-
-
-
-
-
+/* Libère les sprites proprement*/
 /* Libère une AnimatedSprite */
-static void free_animated(AnimatedSprite *sprite) {
+void free_animated(AnimatedSprite *sprite) {
     int i;
     for (i = 0; i < MAX_FRAMES; i++) {
         if (sprite->frames[i] != NULL) {
@@ -394,19 +414,16 @@ static void free_animated(AnimatedSprite *sprite) {
     }
     sprite->frame_count = 0;
 }
-
-static void free_directional(DirectionalSprites *part) {
+void free_directional(DirectionalSprites *part) {
     free_animated(&part->up);
     free_animated(&part->right);
     free_animated(&part->down);
     free_animated(&part->left);
 }
-
-static void free_corner(CornerSprites *corner) {
+void free_corner(CornerSprites *corner) {
     free_directional(&corner->turn_right);
     free_directional(&corner->turn_left);
 }
-
 void free_snake_sprites(SnakeSprites *sprites) {
     free_directional(&sprites->head);
     free_directional(&sprites->body_head);
@@ -417,25 +434,3 @@ void free_snake_sprites(SnakeSprites *sprites) {
     free_corner(&sprites->tail_corner);
     sprites->is_loaded = 0;
 }
-
-void init_snake_animation(SnakeAnimation *anim, int frame_delay) {
-    anim->current_frame = 0;
-    anim->frame_delay = frame_delay;
-    anim->tick_counter = 0;
-}
-
-void update_snake_animation(SnakeAnimation *anim) {
-    anim->tick_counter++;
-    if (anim->tick_counter >= anim->frame_delay) {
-        anim->tick_counter = 0;
-        anim->current_frame++;
-    }
-}
-
-void reset_snake_animation(SnakeAnimation *anim) {
-    anim->current_frame = 0;
-    anim->tick_counter = 0;
-}
-
-
-

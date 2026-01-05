@@ -17,6 +17,7 @@ void process_classic_mode(
     switch (game->state) {
         case FREEZE_GAME_MENU:
             freeze_game_menu(game, window_size, buttons_list);
+            reset_snake_animation(&game->snake_animation);
             break;
 
         case PLAYING:
@@ -103,23 +104,20 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
 
     process_playing_key(game, buttons_list);
 
-    /* Mise à jour de l'animation à chaque frame */
-    update_snake_animation(&game->snake_animation);
-
     /* FPS+1 car on veux se déplacer au maximun 1 fois par frame */
     if (*nb_frames % (FPS+1 - game->settings.speed) == 0) {
         switch (get_next_cell_value(&game->grid, &game->snake)) {
             case CELL_EMPTY:
                 move_snake(&game->grid, &game->snake);
-                game->snake.has_next_direction = 0;
                 reset_snake_animation(&game->snake_animation);
+                game->snake.has_next_direction = 0;
                 break;
 
             case CELL_FOOD:
                 grow_snake(&game->grid, &game->snake);
                 game->snake.has_next_direction = 0;
-                reset_snake_animation(&game->snake_animation);
                 spawn_food(&game->grid, &game->food_list, 1, 1);
+                reset_snake_animation(&game->snake_animation);
                 break;
 
             case CELL_WALL:
@@ -134,8 +132,8 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                     save_scores(score_board);
                 } else {
                     move_snake(&game->grid, &game->snake);
-                    game->snake.has_next_direction = 0;
                     reset_snake_animation(&game->snake_animation);
+                    game->snake.has_next_direction = 0;
                 }
                 break;
             case CELL_SNAKE:
@@ -154,6 +152,10 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
 
 
         *nb_frames = 0;
+        reset_snake_animation(&game->snake_animation);
     }
+
+    /* Mise à jour de l'animation à chaque frame */
+    update_snake_animation(&game->snake_animation);
     draw_game(game, window_size);
 }
