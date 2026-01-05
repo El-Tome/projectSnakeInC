@@ -1,0 +1,77 @@
+-Compilation
+
+Le projet se compile à l’aide de gcc et d’un Makefile fourni.
+Prérequis
+
+    GCC
+
+    La bibliothèque MLV (présente et accessible via pkg-config)
+
+Commande  make
+
+Cette commande :
+
+    Compile tous les fichiers .c présents dans le dossier src/
+
+    Génère les fichiers objets dans le dossier build/
+
+    Produit l’exécutable final nommé snake à la racine du projet
+
+Les options de compilation respectent la norme C89 avec des warnings activés (-Wall -W -pedantic).
+
+
+-Exécution
+
+Une fois la compilation terminée, lancez le programme avec :
+./snake
+
+Le programme doit être exécuté depuis la racine du projet afin que les chemins relatifs soient valides.
+
+
+-Sauvegarde: La sauvegarde est manuel et se place dans le premier emplacement libre parmi les 4 slots disponible.
+Si il n'y as pas de slots disponibles, le programme demandera de d'abord supprimé une sauvegarde déjà existante
+
+
+Le jeu dispose de 4 emplacements de sauvegarde appelés slots :
+
+    Slot 0
+
+    Slot 1
+
+    Slot 2
+
+    Slot 3
+
+Chaque slot correspond à un fichier de sauvegarde distinct. Lors du chargement :
+
+    Le programme vérifie si le fichier existe
+
+    Il lit les données en binaire
+
+    Il vérifie la validité de la sauvegarde
+
+Un slot est considéré comme occupé uniquement si toutes ces conditions sont remplies.
+
+
+- Structure des fichiers de sauvegarde:
+
+Les fichiers .dat sont des fichiers binaires contenant une structure SaveData écrite et lue directement depuis la mémoire.
+
+ses caractéristiques sont :
+
+    Lecture/écriture binaire (sizeof(SaveData))
+
+    Dépendante de la structure C utilisée
+
+    Non éditable manuellement
+
+
+La structure SaveData contient :
+
+    Les informations nécessaires à l’état du jeu
+
+    Les données de la grille
+
+    Les paramètres permettant de vérifier la validité de la sauvegarde
+
+Avant utilisation, chaque sauvegarde est validée par une fonction dédiée afin d’éviter le chargement de données corrompues.
