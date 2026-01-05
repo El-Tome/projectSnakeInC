@@ -19,4 +19,7 @@ typedef struct {
 
 void spawn_food(Grid *grid, FoodList *food_list, int value, int nb_to_spawn);
 
+/* Fait apparaître nb obstacles (pierres) aléatoirement sur la grille */
+void spawn_obstacle(Grid *grid, int nb_to_spawn);
+
 #endif

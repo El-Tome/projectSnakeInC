@@ -98,6 +98,7 @@ void display_new_game_menu(
     int total_menu_h;
     int total_menu_w;
     int start_x, start_y;
+    int line1_start_x;
 
     char size_text[100];
     char speed_text[100];
@@ -120,8 +121,9 @@ void display_new_game_menu(
     /* Réinitialiser le compteur de boutons */
     buttons_list->nb_buttons = 0;
 
-    /* LIGNE 1 : Mode 2 joueurs et Murs */
-    btn.top_left_x = start_x;
+    /* LIGNE 1 : Mode 2 joueurs, Murs et Pierres (3 boutons centrés) */
+    line1_start_x = (window_size.width - (3 * btn.width + 2 * btn.gap_width * 2)) / 2;
+    btn.top_left_x = line1_start_x;
     btn.top_left_y = start_y;
     strcpy(btn.text, settings->is_two_players ? "2 Joueurs: Oui" : "2 Joueurs: Non");
     draw_button(btn, buttons_list->selected_button == 0);
@@ -131,6 +133,12 @@ void display_new_game_menu(
     btn.top_left_x += btn.width + btn.gap_width * 2;
     strcpy(btn.text, settings->has_walls ? "Murs: Oui" : "Murs: Non");
     draw_button(btn, buttons_list->selected_button == 1);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+
+    btn.top_left_x += btn.width + btn.gap_width * 2;
+    strcpy(btn.text, settings->spawn_obstacle_on_eat ? "Pierres: Oui" : "Pierres: Non");
+    draw_button(btn, buttons_list->selected_button == 2);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
@@ -146,15 +154,15 @@ void display_new_game_menu(
     MLV_draw_text(text_x, text_y, size_text, MLV_COLOR_WHITE);
 
     btn.top_left_x = start_x;
-    btn.top_left_y += btn.height + btn.gap_height;
+    btn.top_left_y = start_y + btn.height + btn.gap_height;
     strcpy(btn.text, "Largeur -");
-    draw_button(btn, buttons_list->selected_button == 2);
+    draw_button(btn, buttons_list->selected_button == 3);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     btn.top_left_x += btn.width + btn.gap_width * 2;
     strcpy(btn.text, "Largeur +");
-    draw_button(btn, buttons_list->selected_button == 3);
+    draw_button(btn, buttons_list->selected_button == 4);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
@@ -162,13 +170,13 @@ void display_new_game_menu(
     btn.top_left_x = start_x;
     btn.top_left_y += btn.height + btn.gap_height;
     strcpy(btn.text, "Hauteur -");
-    draw_button(btn, buttons_list->selected_button == 4);
+    draw_button(btn, buttons_list->selected_button == 5);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     btn.top_left_x += btn.width + btn.gap_width * 2;
     strcpy(btn.text, "Hauteur +");
-    draw_button(btn, buttons_list->selected_button == 5);
+    draw_button(btn, buttons_list->selected_button == 6);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
@@ -184,13 +192,13 @@ void display_new_game_menu(
     btn.top_left_x = start_x;
     btn.top_left_y += btn.height + btn.gap_height;
     strcpy(btn.text, "Vitesse -");
-    draw_button(btn, buttons_list->selected_button == 6);
+    draw_button(btn, buttons_list->selected_button == 7);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
     btn.top_left_x += btn.width + btn.gap_width * 2;
     strcpy(btn.text, "Vitesse +");
-    draw_button(btn, buttons_list->selected_button == 7);
+    draw_button(btn, buttons_list->selected_button == 8);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
@@ -198,7 +206,7 @@ void display_new_game_menu(
     btn.top_left_x = btn.gap_width * 2;
     btn.top_left_y = window_size.height - btn.height - (btn.gap_height * 2);
     strcpy(btn.text, "Retour");
-    draw_button(btn, buttons_list->selected_button == 8);
+    draw_button(btn, buttons_list->selected_button == 9);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
@@ -206,7 +214,7 @@ void display_new_game_menu(
     btn.top_left_x = window_size.width - btn.width - (btn.gap_width * 2);
     btn.top_left_y = window_size.height - btn.height - (btn.gap_height * 2);
     strcpy(btn.text, "Lancer");
-    draw_button(btn, buttons_list->selected_button == 9);
+    draw_button(btn, buttons_list->selected_button == 10);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 }

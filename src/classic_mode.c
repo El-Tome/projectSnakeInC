@@ -113,6 +113,10 @@ void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int
                 grow_snake(&game->grid, &game->snake);
                 game->snake.has_next_direction = 0;
                 spawn_food(&game->grid, &game->food_list, 1, 1);
+                /* Fait apparaître un obstacle si l'option est activée */
+                if (game->settings.spawn_obstacle_on_eat) {
+                    spawn_obstacle(&game->grid, 1);
+                }
                 reset_snake_animation(&game->snake_animation);
                 break;
 

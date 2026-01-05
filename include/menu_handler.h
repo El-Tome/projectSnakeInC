@@ -21,14 +21,15 @@ typedef enum {
     ACTION_NONE_NEW_GAME    = -1,
     ACTION_TOGGLE_2_PLAYERS = 0,
     ACTION_TOGGLE_WALLS     = 1,
-    ACTION_DECR_WIDTH       = 2,
-    ACTION_INCR_WIDTH       = 3,
-    ACTION_DECR_HEIGHT      = 4,
-    ACTION_INCR_HEIGHT      = 5,
-    ACTION_DECR_SPEED       = 6,
-    ACTION_INCR_SPEED       = 7,
-    ACTION_BACK_MAIN        = 8,
-    ACTION_START_GAME       = 9
+    ACTION_TOGGLE_OBSTACLES = 2,  /* Nouvelle option : pierres qui apparaissent */
+    ACTION_DECR_WIDTH       = 3,
+    ACTION_INCR_WIDTH       = 4,
+    ACTION_DECR_HEIGHT      = 5,
+    ACTION_INCR_HEIGHT      = 6,
+    ACTION_DECR_SPEED       = 7,
+    ACTION_INCR_SPEED       = 8,
+    ACTION_BACK_MAIN        = 9,
+    ACTION_START_GAME       = 10
 } NewGameMenuAction;
 
 typedef enum {

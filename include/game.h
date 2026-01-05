@@ -26,6 +26,7 @@ typedef struct {
     int is_two_players;
     int has_walls;
     int initial_length;
+    int spawn_obstacle_on_eat;  /* Option pour faire apparaître une pierre en mangeant */
 } GameSettings;
 
 /* Résultat du mode VS */

@@ -66,36 +66,45 @@ NewGameMenuAction handle_new_game_menu_navigation(ButtonsList *buttons_list) {
     touche = get_event();
     switch (touche) {
         case UP:
-            if (buttons_list->selected_button >= 8) { /* Depuis Retour ou Lancer */
+            if (buttons_list->selected_button >= 9) { /* Depuis Retour ou Lancer */
                 buttons_list->selected_button -= 2; /* Remonte à la grille */
-            } else if (buttons_list->selected_button >= 2) {
-                buttons_list->selected_button -= 2;
+            } else if (buttons_list->selected_button >= 3) {
+                buttons_list->selected_button -= 3; /* Remonte d'une ligne (3 boutons par ligne) */
             }
             break;
 
         case DOWN:
-            if (buttons_list->selected_button < 6) {
-                buttons_list->selected_button += 2;
-            } else if (buttons_list->selected_button < 8) {
+            if (buttons_list->selected_button < 3) {
+                buttons_list->selected_button += 3; /* Descend d'une ligne */
+            } else if (buttons_list->selected_button < 6) {
+                buttons_list->selected_button += 2; /* Ligne taille -> vitesse */
+            } else if (buttons_list->selected_button < 9) {
                 /* Depuis la dernière ligne de la grille, va vers Retour ou Lancer */
-                /* Le bouton de gauche (6) va vers Retour (8), le droit (7) vers Lancer (9) */
-                buttons_list->selected_button += 2;
+                buttons_list->selected_button += 3;
             }
             break;
             
         case LEFT:
-            if (buttons_list->selected_button == 9) {
-                 buttons_list->selected_button = 8; /* Lancer -> Retour */
-            } else if (buttons_list->selected_button % 2 == 1) {
+            if (buttons_list->selected_button == 10) {
+                 buttons_list->selected_button = 9; /* Lancer -> Retour */
+            } else if (buttons_list->selected_button % 3 != 0 && buttons_list->selected_button < 3) {
                 buttons_list->selected_button -= 1;
+            } else if (buttons_list->selected_button >= 3 && buttons_list->selected_button < 9) {
+                if (buttons_list->selected_button % 2 == 1) {
+                    buttons_list->selected_button -= 1;
+                }
             }
             break;
             
         case RIGHT:
-            if (buttons_list->selected_button == 8) {
-                 buttons_list->selected_button = 9; /* Retour -> Lancer */
-            } else if (buttons_list->selected_button % 2 == 0 && buttons_list->selected_button < 8) {
+            if (buttons_list->selected_button == 9) {
+                 buttons_list->selected_button = 10; /* Retour -> Lancer */
+            } else if (buttons_list->selected_button < 2) {
                 buttons_list->selected_button += 1;
+            } else if (buttons_list->selected_button >= 3 && buttons_list->selected_button < 9) {
+                if (buttons_list->selected_button % 2 == 1 && buttons_list->selected_button < 8) {
+                    buttons_list->selected_button += 1;
+                }
             }
             break;
 
@@ -166,6 +175,9 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             break;
         case ACTION_TOGGLE_WALLS:
             game->settings.has_walls = !game->settings.has_walls;
+            break;
+        case ACTION_TOGGLE_OBSTACLES:
+            game->settings.spawn_obstacle_on_eat = !game->settings.spawn_obstacle_on_eat;
             break;
         case ACTION_DECR_WIDTH:
             if (game->settings.width > MIN_GRID_WIDTH) {
