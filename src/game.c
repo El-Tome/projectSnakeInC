@@ -1,7 +1,7 @@
 #include "game.h"
 #include "main.h"
 #include "snake_display.h"
-#include "apple_display.h" 
+#include "assets_display.h" 
 #include <math.h>
 
 void init_game(Game *game, WindowSize *window_size) {
@@ -16,9 +16,6 @@ void init_game(Game *game, WindowSize *window_size) {
 
     /* placement de la nourriture */
     spawn_food(&game->grid, &game->food_list, 1, 1);
-    
-        /* Initialisation affichage pomme*/
-    apple_display_init();
     
     /* Initialisation des sprites du serpent sinon mode case verte */
     if (init_snake_sprites(&game->snake_sprites)) {
@@ -41,11 +38,14 @@ void init_game(Game *game, WindowSize *window_size) {
         init_snake_animation(&game->snake_animation, frame_delay, frames_to_play);
     }
     
+    load_all_assets(&game->assets);
+
     draw_game(game, window_size);
 }
 
 void free_game(Game *game) {
     free_snake_sprites(&game->snake_sprites);
+    free_all_assets(&game->assets);
 }
 
 void draw_game(Game *game, WindowSize *window_size) {
@@ -53,7 +53,7 @@ void draw_game(Game *game, WindowSize *window_size) {
     GridOffset grid_offset;
     
     /* Dessiner la grille de base */
-    draw_grid(&game->grid, window_size);
+    draw_grid(&game->assets, &game->grid, window_size);
     
     /* Calculer la taille des cellules et l'offset */
     cell_size   = get_cell_size(&game->grid, *window_size);
@@ -136,12 +136,15 @@ void init_vs_game(Game *game, WindowSize *window_size) {
         init_snake_animation(&game->snake2_animation, frame_delay, frames_to_play);
     }
 
+    load_all_assets(&game->assets);
+
     draw_vs_game(game, window_size);
 }
 
 void free_vs_game(Game *game) {
     free_snake_sprites(&game->snake_sprites);
     free_snake_sprites(&game->snake2_sprites);
+    free_all_assets(&game->assets);
 }
 
 void draw_vs_game(Game *game, WindowSize *window_size) {
@@ -149,7 +152,7 @@ void draw_vs_game(Game *game, WindowSize *window_size) {
     GridOffset grid_offset;
 
     /* Dessiner la grille de base */
-    draw_grid(&game->grid, window_size);
+    draw_grid(&game->assets, &game->grid, window_size);
 
     /* Calculer la taille des cellules et l'offset */
     cell_size = get_cell_size(&game->grid, *window_size);

@@ -7,6 +7,7 @@
 #include "snake.h"
 #include "snake_display.h"
 #include "food.h"
+#include "assets_display.h"
 
 #define MAX_SPEED 60
 #define MIN_SPEED 1
@@ -52,6 +53,9 @@ typedef struct {
     SnakeSprites    snake2_sprites;
     SnakeAnimation  snake2_animation;
     VSResult        vs_result;
+
+    /* Ressources */
+    AllAssetsDisplay assets;
 
     /*
     GameOver game_over;

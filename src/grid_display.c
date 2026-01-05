@@ -1,6 +1,5 @@
 #include "grid_display.h"
 #include "snake_display.h"
-#include "apple_display.h"  
 #include "MLV/MLV_color.h"
 
 CellSize get_cell_size(Grid *grid, WindowSize window_size) {
@@ -41,7 +40,7 @@ GridOffset get_grid_offset(Grid *grid, WindowSize window_size, CellSize cell_siz
     return offset;
 }
 
-void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell) {
+void draw_cell(AllAssetsDisplay *assets, CellSize cell_size, GridOffset offset, Position *p, CellType cell) {
     int x, y;
 
     x = offset.x + p->x * cell_size.width;
@@ -58,16 +57,15 @@ void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell
             break;
         
         case CELL_FOOD:
-            apple_display_draw(
-                *p,
-                cell_size.width,
-                offset.x,
-                offset.y
-          );
+            apple_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
             break;
         
         case CELL_WALL:
-            MLV_draw_filled_rectangle(x + 2, y + 2, cell_size.width - 4, cell_size.height - 4, MLV_rgba(255, 255, 255, 255));
+            wall_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
+            break;
+
+        case CELL_BONUS:
+            bonus_display_draw(assets, *p, cell_size.width, offset.x, offset.y);
             break;
         
         default:
@@ -75,7 +73,7 @@ void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell
     }
 }
 
-void draw_grid(Grid *grid, WindowSize *window_size) {
+void draw_grid(AllAssetsDisplay *assets, Grid *grid, WindowSize *window_size) {
     int i, j;
     Position p;
     CellSize cell_size;
@@ -89,7 +87,7 @@ void draw_grid(Grid *grid, WindowSize *window_size) {
         for (j = 0; j < grid->height; j++) {
             p.x = i;
             p.y = j;
-            draw_cell(cell_size, offset, &p, get_cell(grid, &p));
+            draw_cell(assets, cell_size, offset, &p, get_cell(grid, &p));
         }
     }
 }

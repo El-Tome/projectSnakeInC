@@ -3,6 +3,7 @@
 
 #include "grille.h"
 #include "main.h"
+#include "assets_display.h"
 
 typedef struct {
     int width;
@@ -21,8 +22,8 @@ CellSize get_cell_size(Grid *grid, WindowSize window_size);
 /* Calcule l'offset pour centrer la grille */
 GridOffset get_grid_offset(Grid *grid, WindowSize window_size, CellSize cell_size);
 
-void draw_cell(CellSize cell_size, GridOffset offset, Position *p, CellType cell);
+void draw_cell(AllAssetsDisplay *assets, CellSize cell_size, GridOffset offset, Position *p, CellType cell);
 
-void draw_grid(Grid *grid, WindowSize *window_size);
+void draw_grid(AllAssetsDisplay *assets, Grid *grid, WindowSize *window_size);
 
 #endif
