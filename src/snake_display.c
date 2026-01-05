@@ -258,18 +258,16 @@ void draw_segment(
     DirectionalSprites part;
     MLV_Image *img;
     int frame_idx, x, y;
-    int prev_seg_idx, next_seg_idx;
+    int prev_seg_idx;
     int pos_from_tail;
-    Direction prev_dir, next_dir;
+    Direction prev_dir;
     CornerType corner;
     
     seg = snake.segments[seg_idx];
     
     /* Trouver les directions des segments adjacents */
     prev_seg_idx = (seg_idx - 1 + MAX_SNAKE_LENGTH) % MAX_SNAKE_LENGTH;
-    next_seg_idx = (seg_idx + 1) % MAX_SNAKE_LENGTH;
     prev_dir = snake.segments[prev_seg_idx].direction;
-    next_dir = snake.segments[next_seg_idx].direction;
     
     /* Sélectionner les sprites selon le type */
     switch (type) {
@@ -430,4 +428,23 @@ void free_snake_sprites(SnakeSprites *sprites) {
     free_corner(&sprites->body_corner);
     free_corner(&sprites->tail_corner);
     sprites->is_loaded = 0;
+}
+
+void draw_snake_fallback_color(Snake *snake, CellSize cell_size, GridOffset offset, MLV_Color color) {
+    int i, idx, x, y;
+    Position pos;
+    
+    for (i = 0; i < snake->length; i++) {
+        idx = (snake->tail_index + i) % MAX_SNAKE_LENGTH;
+        pos = snake->segments[idx].position;
+        
+        x = offset.x + pos.x * cell_size.width;
+        y = offset.y + pos.y * cell_size.height;
+        
+        MLV_draw_filled_rectangle(
+            x + 2, y + 2,
+            cell_size.width - 4, cell_size.height - 4,
+            color
+        );
+    }
 }

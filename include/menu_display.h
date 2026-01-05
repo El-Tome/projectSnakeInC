@@ -71,4 +71,6 @@ void display_save_menu(
     SaveSlotList *save_slots
 );
 
+void display_vs_game_over_menu(WindowSize window_size, ButtonsList *buttons_list, Game *game);
+
 #endif

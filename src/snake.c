@@ -72,6 +72,43 @@ void init_snake(Grid *grid, Snake *snake, int initial_length) {
     }
 }
 
+
+/* Initialise le serpent du joueur 2 à droite de la grille */
+void init_snake_player2(Grid *grid, Snake *snake, int initial_length) {
+    Position start_pos;
+    int i;
+
+    /* Le serpent 2 commence à droite, orienté vers la gauche */
+    start_pos.x = (grid->width * 2) / 3;
+    start_pos.y = grid->height / 2;
+
+    snake->is_alive = 1;
+
+    if (initial_length > MAX_SNAKE_LENGTH) {
+        initial_length = MAX_SNAKE_LENGTH;
+    } else if (initial_length < 1) {
+        initial_length = 1;
+    } else if (start_pos.x + (initial_length - 1) >= grid->width) {
+        initial_length = grid->width / 3;
+    }
+
+    snake->length = initial_length;
+    snake->buffer = DIR_NONE;
+    snake->has_next_direction = 0;
+
+    snake->head_index = initial_length - 1;
+    snake->tail_index = 0;
+
+    /* Le serpent 2 va vers la gauche */
+    for (i = 0; i < initial_length; i++) {
+        snake->segments[i].position.x = start_pos.x + (initial_length - 1 - i);
+        snake->segments[i].position.y = start_pos.y;
+        snake->segments[i].direction = DIR_LEFT;
+        snake->segments[i].corner = CORNER_NONE;
+        set_cell(grid, &snake->segments[i].position, CELL_SNAKE);
+    }
+}
+
 /* Retourne la position de la tête */
 Position get_head_position(Snake snake) {
     return snake.segments[snake.head_index].position;
@@ -290,4 +327,21 @@ CellType get_next_cell_value(Grid *grid, Snake *snake) {
     }
 
     return get_cell(grid, &next_position);
+}
+
+int check_snake_collision(Snake *attacker, Snake *target) {
+    Position head = get_head_position(*attacker);
+    int i;
+    int idx;
+    int result = 0;
+
+    /* Parcourt tous les segments du serpent cible */
+    for (i = 0; i < target->length; i++) {
+        idx = (target->tail_index + i) % MAX_SNAKE_LENGTH;
+        if (head.x == target->segments[idx].position.x &&
+            head.y == target->segments[idx].position.y) {
+            result = 1;
+        }
+    }
+    return result;
 }

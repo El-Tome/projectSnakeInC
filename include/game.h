@@ -27,6 +27,14 @@ typedef struct {
     int initial_length;
 } GameSettings;
 
+/* Résultat du mode VS */
+typedef enum {
+    VS_RESULT_NONE,      /* Partie en cours */
+    VS_RESULT_P1_WINS,   /* Joueur 1 gagne */
+    VS_RESULT_P2_WINS,   /* Joueur 2 gagne */
+    VS_RESULT_DRAW       /* Égalité (collision simultanée) */
+} VSResult;
+
 typedef struct {
     GameSettings    settings;
     Grid            grid;
@@ -38,6 +46,12 @@ typedef struct {
     /* Système de sprites pour le serpent */
     SnakeSprites    snake_sprites;
     SnakeAnimation  snake_animation;
+
+    /* Mode 2 joueurs */
+    Snake           snake2;
+    SnakeSprites    snake2_sprites;
+    SnakeAnimation  snake2_animation;
+    VSResult        vs_result;
 
     /*
     GameOver game_over;
@@ -54,5 +68,8 @@ void free_game(Game *game);
 /* Dessine le jeu complet (grille + serpent avec sprites) */
 void draw_game(Game *game, WindowSize *window_size);
 
+void init_vs_game(Game *game, WindowSize *window_size);
+void free_vs_game(Game *game);
+void draw_vs_game(Game *game, WindowSize *window_size);
 
 #endif

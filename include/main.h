@@ -13,7 +13,8 @@ typedef enum {
     NEW_GAME_MENU   = 1,
     LOAD_GAME_MENU  = 2,
     SCORES_MENU     = 3,
-    IN_GAME_CLASSIC = 4
+    IN_GAME_CLASSIC = 4,
+    IN_GAME_VS      = 5
 } MenuState;
 
 typedef enum {

@@ -45,6 +45,9 @@ typedef struct {
  */
 void init_snake(Grid *grid, Snake *snake, int initial_length);
 
+/* Initialise le serpent du joueur 2 à droite de la grille */
+void init_snake_player2(Grid *grid, Snake *snake, int initial_length);
+
 /* 
  * Déplace le serpent d'une case dans sa direction actuelle.
  * Met à jour head_index et tail_index (circular buffer).
@@ -79,5 +82,8 @@ int is_valid_direction_change(Direction current, Direction new_dir);
 /* Helpers pour récupérer les positions sans se soucier du buffer circulaire */
 Position get_head_position(Snake snake);
 Position get_segment_position(Snake snake, int index_offset); /* index_offset: 0=tête, 1=cou, ..., length-1=queue */
+
+/* Vérifie si deux serpents sont en collision (l'un touche l'autre) */
+int check_snake_collision(Snake *attacker, Snake *target);
 
 #endif

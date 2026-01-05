@@ -632,3 +632,62 @@ void display_save_menu(
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 }
+
+void display_vs_game_over_menu(WindowSize window_size, ButtonsList *buttons_list, Game *game) {
+    Button btn;
+    int total_menu_h;
+    char result_text[100];
+    int text_width, text_height;
+
+    /* Déterminer le texte du résultat */
+    switch (game->vs_result) {
+        case VS_RESULT_P1_WINS:
+            strcpy(result_text, "JOUEUR 1 GAGNE !");
+            break;
+        case VS_RESULT_P2_WINS:
+            strcpy(result_text, "JOUEUR 2 GAGNE !");
+            break;
+        case VS_RESULT_DRAW:
+            strcpy(result_text, "EGALITE !");
+            break;
+        default:
+            strcpy(result_text, "FIN DE PARTIE");
+            break;
+    }
+
+    /* Affichage du résultat (titre) */
+    MLV_get_size_of_text(result_text, &text_width, &text_height);
+    MLV_draw_text(
+        (window_size.width - text_width) / 2,
+        window_size.height / 4,
+        result_text, MLV_COLOR_YELLOW
+    );
+
+    /* Dimensions et positions relatives (en pourcentage) */
+    btn.width      = window_size.width  / 4;   /* Largeur : 25% de l'écran */
+    btn.gap_width  = window_size.width  / 50;  /* Espace horizontal : 2% de l'écran */
+    btn.height     = window_size.height / 10;  /* Hauteur : 10% de l'écran */
+    btn.gap_height = window_size.height / 50;  /* Espace vertical : 2% de l'écran */
+
+    /* Calcul du point X horizontal pour centrer le bouton */
+    btn.top_left_x = (window_size.width - btn.width) / 2;
+    
+    /* Centrage vertical des deux boutons */
+    total_menu_h   = (2 * btn.height) + (1 * btn.gap_height);
+    btn.top_left_y = (window_size.height - total_menu_h) / 2 + btn.height;
+
+    buttons_list->nb_buttons = 0;
+
+    /* Bouton Rejouer */
+    strcpy(btn.text, "Rejouer");
+    draw_button(btn, buttons_list->selected_button == 0);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+
+    /* Bouton Retour au Menu */
+    btn.top_left_y += btn.height + btn.gap_height;
+    strcpy(btn.text, "Retour au Menu");
+    draw_button(btn, buttons_list->selected_button == 1);
+    buttons_list->buttons[buttons_list->nb_buttons] = btn;
+    buttons_list->nb_buttons++;
+}

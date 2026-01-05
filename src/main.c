@@ -8,6 +8,7 @@
 #include "score.h"
 #include "save.h"
 #include "classic_mode.h"
+#include "vs_mode.h"
 
 /* initialisation des variables */
 void init_game_defaults(Game *game) {
@@ -111,6 +112,17 @@ int main() {
                     &save_slots
                 );
                 break;
+            
+            case IN_GAME_VS:
+                process_vs_mode(
+                    &game,
+                    &window_size,
+                    &buttons_list,
+                    &nb_frames,
+                    &menu_state
+                );
+                break;
+
             default:
                 quitter = 1;
                 break;

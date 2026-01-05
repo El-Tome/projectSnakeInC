@@ -72,6 +72,12 @@ typedef enum {
     ACTION_SAVE_SLOT_3   = 3
 } SaveMenuAction;
 
+typedef enum {
+    ACTION_VS_GAME_OVER_NONE = -1,
+    ACTION_VS_GAME_OVER_REPLAY = 0,
+    ACTION_VS_GAME_OVER_BACK_TO_MENU = 1
+} VsGameOverMenuAction;
+
 void process_main_menu_actions(
     ButtonsList *buttons_list, 
     MenuState   *menu_state, 
@@ -117,6 +123,13 @@ void process_save_menu_actions(
     Game          *game,
     MenuState     *menu_state,
     SaveSlotList  *save_slots
+);
+
+void process_vs_game_over_menu_actions(
+    ButtonsList *buttons_list,
+    Game        *game,
+    MenuState   *menu_state,
+    WindowSize  *window_size
 );
 
 #endif

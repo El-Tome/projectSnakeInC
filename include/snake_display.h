@@ -90,4 +90,7 @@ void draw_snake(SnakeSprites sprites, Snake snake, SnakeAnimation anim,
 /* Fallback en rectangles */
 void draw_snake_fallback(Snake *snake, CellSize cell_size, GridOffset offset);
 
+/* Fallback en rectangles avec couleur personnalisée */
+void draw_snake_fallback_color(Snake *snake, CellSize cell_size, GridOffset offset, MLV_Color color);
+
 #endif

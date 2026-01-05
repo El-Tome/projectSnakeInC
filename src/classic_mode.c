@@ -41,9 +41,6 @@ void process_classic_mode(
             break;
     
     }
-   
-
-
 }
 
 void freeze_game_menu(Game *game, WindowSize *window_size, ButtonsList *buttons_list) {
@@ -100,7 +97,6 @@ void process_playing_key(Game *game, ButtonsList *buttons_list) {
 
 void playing(Game *game, WindowSize *window_size, ButtonsList *buttons_list, int *nb_frames, ScoreBoard *score_board) {
     ScoreEntry    score_entry;
-
 
     process_playing_key(game, buttons_list);
 

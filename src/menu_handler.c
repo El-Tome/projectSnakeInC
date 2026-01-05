@@ -1,7 +1,6 @@
 #include "menu_handler.h"
 #include "score.h"
 #include "save.h"
-/*#include "grille.h"*/
 
 void position_souris(ButtonsList *buttons_list){
     int x, y, n;
@@ -203,9 +202,15 @@ void process_new_game_menu_actions(ButtonsList *buttons_list, Game *game, MenuSt
             buttons_list->selected_button = 0;
             break;
         case ACTION_START_GAME:
-            *menu_state = IN_GAME_CLASSIC;
-            game->state = FREEZE_GAME_MENU;
-            init_game(game, window_size);
+            if (game->settings.is_two_players) {
+                *menu_state = IN_GAME_VS;
+                game->state = FREEZE_GAME_MENU;
+                init_vs_game(game, window_size);
+            } else {
+                *menu_state = IN_GAME_CLASSIC;
+                game->state = FREEZE_GAME_MENU;
+                init_game(game, window_size);
+            }
             break;
         default:
             break;
@@ -517,4 +522,46 @@ void process_save_menu_actions(
         *menu_state = MAIN_MENU;
         buttons_list->selected_button = 0;
     }
+}
+
+VsGameOverMenuAction handle_vs_game_over_menu_navigation(ButtonsList *buttons_list) {
+    ToucheClavier touche;
+    VsGameOverMenuAction action = ACTION_VS_GAME_OVER_NONE;
+
+    touche = get_event();
+    switch (touche) {
+        case UP:
+            buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
+            break;
+        case DOWN:
+            buttons_list->selected_button = (buttons_list->selected_button + 1) % buttons_list->nb_buttons;
+            break;
+        case ENTER:
+        case MOUSE_LEFT_CLICK:
+            action = (VsGameOverMenuAction)buttons_list->selected_button;
+            break;
+        default:
+            break;
+    }
+
+    position_souris(buttons_list);
+
+    return action;
+}
+void process_vs_game_over_menu_actions(ButtonsList *buttons_list, Game *game, MenuState *menu_state, WindowSize *window_size) {
+    VsGameOverMenuAction action = handle_vs_game_over_menu_navigation(buttons_list);
+
+    switch (action) {
+        case ACTION_VS_GAME_OVER_REPLAY:
+            game->state = FREEZE_GAME_MENU;
+            init_vs_game(game, window_size);
+            break;
+        case ACTION_VS_GAME_OVER_BACK_TO_MENU:
+            *menu_state = MAIN_MENU;
+            buttons_list->selected_button = 0;
+            break;
+        default:
+            break;
+    }
+
 }
