@@ -1,7 +1,6 @@
 #include "vs_mode.h"
 #include "controls.h"
 #include "menu_display.h"
-#include <math.h>
 
 /* Prototypes des fonctions internes */
 void freeze_vs_game_menu(Game *game, WindowSize *window_size, ButtonsList *buttons_list);
@@ -194,35 +193,8 @@ void process_vs_mode(
             break;
 
         case PAUSE_MENU:
-            display_pause_menu(*window_size, buttons_list);
-            /* Gestion simplifiée du menu pause pour le mode VS */
-            {
-                ToucheClavier touche = get_event();
-                switch (touche) {
-                    case UP:
-                        buttons_list->selected_button = (buttons_list->selected_button - 1 + buttons_list->nb_buttons) % buttons_list->nb_buttons;
-                        break;
-                    case DOWN:
-                        buttons_list->selected_button = (buttons_list->selected_button + 1) % buttons_list->nb_buttons;
-                        break;
-                    case ENTER:
-                    case MOUSE_LEFT_CLICK:
-                        if (buttons_list->selected_button == 0) {
-                            /* Reprendre */
-                            game->state = FREEZE_GAME_MENU;
-                        } else if (buttons_list->selected_button == 2) {
-                            /* Menu Principal (index 2 car sauvegarde est 1) */
-                            *menu_state = MAIN_MENU;
-                            buttons_list->selected_button = 0;
-                        }
-                        break;
-                    case ESCAPE:
-                        game->state = FREEZE_GAME_MENU;
-                        break;
-                    default:
-                        break;
-                }
-            }
+            display_pause_menu(*window_size, buttons_list, 1);
+            process_pause_menu_actions(buttons_list, game, menu_state, NULL, 1);
             break;
 
         default:

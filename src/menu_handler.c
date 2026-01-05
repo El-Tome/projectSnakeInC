@@ -319,44 +319,63 @@ void process_pause_menu_actions(
     ButtonsList   *buttons_list,
     Game          *game,
     MenuState     *menu_state,
-    SaveSlotList  *save_slots
+    SaveSlotList  *save_slots,
+    int is_vs_mode
 ) {
-    PauseMenuAction action = handle_pause_menu_navigation(buttons_list);
+    PauseMenuAction action;
     int slot_to_save;
     int i;
     int all_slots_full;
     
+    action = handle_pause_menu_navigation(buttons_list);
+
+    /* En mode VS, les indices sont différents :
+     * - 0 = Reprendre
+     * - 1 = Menu Principal (pas de sauvegarde)
+     * En mode classique :
+     * - 0 = Reprendre
+     * - 1 = Enregistrer
+     * - 2 = Menu Principal
+     */
+    if (is_vs_mode && action == ACTION_SAVE_GAME) {
+        /* En mode VS, l'index 1 est "Menu Principal" */
+        action = ACTION_PAUSE_TO_MENU;
+    }
+
     switch (action) {
         case ACTION_RESUME:
             game->state = FREEZE_GAME_MENU;
             buttons_list->selected_button = 0;
             break;
         case ACTION_SAVE_GAME:
-            /* Recharge la liste des slots pour etre a jour */
-            load_save_slot_list(save_slots);
-            
-            /* Trouve le premier slot libre */
-            slot_to_save = -1;
-            all_slots_full = 1;
-            for (i = 0; i < MAX_SAVE_SLOTS; i++) {
-                if (!save_slots->slot_used[i]) {
-                    slot_to_save = i;
-                    all_slots_full = 0;
-                    break;
+            /* Mode classique uniquement */
+            if (!is_vs_mode && save_slots != NULL) {
+                /* Recharge la liste des slots pour etre a jour */
+                load_save_slot_list(save_slots);
+                
+                /* Trouve le premier slot libre */
+                slot_to_save = -1;
+                all_slots_full = 1;
+                for (i = 0; i < MAX_SAVE_SLOTS; i++) {
+                    if (!save_slots->slot_used[i]) {
+                        slot_to_save = i;
+                        all_slots_full = 0;
+                        break;
+                    }
                 }
-            }
-            
-            /* Si tous les slots sont utilises, on affiche le menu de choix */
-            if (all_slots_full) {
-                game->state = SAVE_MENU;
-                buttons_list->selected_button = 0;
-            } else {
-                /* Sauvegarde dans le slot libre */
-                if (save_game(game, slot_to_save) == FILE_UTILS_SUCCESS) {
-                    load_save_slot_list(save_slots);
+                
+                /* Si tous les slots sont utilises, on affiche le menu de choix */
+                if (all_slots_full) {
+                    game->state = SAVE_MENU;
+                    buttons_list->selected_button = 0;
+                } else {
+                    /* Sauvegarde dans le slot libre */
+                    if (save_game(game, slot_to_save) == FILE_UTILS_SUCCESS) {
+                        load_save_slot_list(save_slots);
+                    }
+                    *menu_state = MAIN_MENU;
+                    buttons_list->selected_button = 0;
                 }
-                *menu_state = MAIN_MENU;
-                buttons_list->selected_button = 0;
             }
             break;
         case ACTION_PAUSE_TO_MENU:

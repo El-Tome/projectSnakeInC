@@ -30,8 +30,8 @@ void process_classic_mode(
             process_game_over_menu_actions(buttons_list, game, menu_state, window_size);
             break;
         case PAUSE_MENU:
-            display_pause_menu(*window_size, buttons_list);
-            process_pause_menu_actions(buttons_list, game, menu_state, save_slots);
+            display_pause_menu(*window_size, buttons_list, 0);
+            process_pause_menu_actions(buttons_list, game, menu_state, save_slots, 0);
             break;
         case SAVE_MENU:
             display_save_menu(*window_size, buttons_list, save_slots);

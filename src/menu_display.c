@@ -356,11 +356,14 @@ void display_scores_menu(
 
 void display_pause_menu(
     WindowSize window_size,
-    ButtonsList *buttons_list
+    ButtonsList *buttons_list,
+    int is_vs_mode
 ) {
     Button btn;
     int total_menu_h;
     int text_width, text_height;
+    int nb_buttons;
+    int menu_btn_index;
 
     /* Affichage du titre "PAUSE" */
     MLV_get_size_of_text("PAUSE", &text_width, &text_height);
@@ -379,8 +382,11 @@ void display_pause_menu(
     /* Calcul du point X horizontal pour centrer le bouton */
     btn.top_left_x = (window_size.width - btn.width) / 2;
     
-    /* Centrage vertical des trois boutons */
-    total_menu_h   = (3 * btn.height) + (2 * btn.gap_height);
+    /* Nombre de boutons selon le mode */
+    nb_buttons = is_vs_mode ? 2 : 3;
+    
+    /* Centrage vertical des boutons */
+    total_menu_h   = (nb_buttons * btn.height) + ((nb_buttons - 1) * btn.gap_height);
     btn.top_left_y = (window_size.height - total_menu_h) / 2;
 
     buttons_list->nb_buttons = 0;
@@ -391,17 +397,21 @@ void display_pause_menu(
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 
-    /* Bouton Enregistrer */
-    btn.top_left_y += btn.height + btn.gap_height;
-    strcpy(btn.text, "Enregistrer");
-    draw_button(btn, buttons_list->selected_button == 1);
-    buttons_list->buttons[buttons_list->nb_buttons] = btn;
-    buttons_list->nb_buttons++;
+    if (!is_vs_mode) {
+        /* Bouton Enregistrer (seulement en mode classique) */
+        btn.top_left_y += btn.height + btn.gap_height;
+        strcpy(btn.text, "Enregistrer");
+        draw_button(btn, buttons_list->selected_button == 1);
+        buttons_list->buttons[buttons_list->nb_buttons] = btn;
+        buttons_list->nb_buttons++;
+    }
 
     /* Bouton Menu Principal */
+    /* Index 2 en mode classique, index 1 en mode VS */
+    menu_btn_index = is_vs_mode ? 1 : 2;
     btn.top_left_y += btn.height + btn.gap_height;
     strcpy(btn.text, "Menu Principal");
-    draw_button(btn, buttons_list->selected_button == 2);
+    draw_button(btn, buttons_list->selected_button == menu_btn_index);
     buttons_list->buttons[buttons_list->nb_buttons] = btn;
     buttons_list->nb_buttons++;
 }

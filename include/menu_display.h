@@ -56,7 +56,8 @@ void display_scores_menu(
 
 void display_pause_menu(
     WindowSize window_size,
-    ButtonsList *buttons_list
+    ButtonsList *buttons_list,
+    int is_vs_mode
 );
 
 void display_load_menu(

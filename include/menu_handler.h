@@ -108,7 +108,8 @@ void process_pause_menu_actions(
     ButtonsList   *buttons_list,
     Game          *game,
     MenuState     *menu_state,
-    SaveSlotList  *save_slots
+    SaveSlotList  *save_slots,
+    int is_vs_mode
 );
 
 void process_load_menu_actions(
